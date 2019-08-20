@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using OrgnalR.Core.Provider;
 
 namespace OrgnalR.Backplane
 {
     public class OrleansHubLifetimeManager<THub> : HubLifetimeManager<THub> where THub : Hub
     {
-        public override Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
+        private readonly IGroupActorProvider groupContainerProvider;
+
+        public OrleansHubLifetimeManager(IGroupActorProvider groupContainerProvider)
         {
-            throw new NotImplementedException();
+            this.groupContainerProvider = groupContainerProvider ?? throw new ArgumentNullException(nameof(groupContainerProvider));
         }
+
 
         public override Task OnConnectedAsync(HubConnectionContext connection)
         {
@@ -23,9 +27,16 @@ namespace OrgnalR.Backplane
             throw new NotImplementedException();
         }
 
+        public override Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
+        {
+            var group = groupContainerProvider.GetGroupActor(groupName);
+            return group.AddToGroupAsync(connectionId, cancellationToken);
+        }
+
         public override Task RemoveFromGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var group = groupContainerProvider.GetGroupActor(groupName);
+            return group.RemoveFromGroupAsync(connectionId, cancellationToken);
         }
 
         public override Task SendAllAsync(string methodName, object[] args, CancellationToken cancellationToken = default)
