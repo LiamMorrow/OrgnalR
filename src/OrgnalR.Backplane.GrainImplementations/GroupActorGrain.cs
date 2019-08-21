@@ -6,9 +6,11 @@ using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core;
 using OrgnalR.Core.Provider;
 using Orleans;
+using Orleans.Providers;
 
 namespace OrgnalR.Backplane.GrainImplementations
 {
+    [StorageProvider(ProviderName = Constants.GROUP_STORAGE_PROVIDER)]
     public class GroupActorGrain : Grain<GroupActorGrainState>, IGroupActorGrain
     {
         private bool dirty = false;
@@ -37,7 +39,7 @@ namespace OrgnalR.Backplane.GrainImplementations
                  State.ConnectionIds
                  .Where(connId => !message.Excluding.Contains(connId))
                  .Select(connId => GrainFactory.GetGrain<IClientGrain>(connId))
-                 .Select(client => client.AcceptMessageAsync(message.Payload))
+                 .Select(client => client.AcceptMessageAsync(message.Payload, cancellationToken))
              ).WithCancellation(cancellationToken.CancellationToken);
         }
 
