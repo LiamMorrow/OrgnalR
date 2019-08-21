@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.SignalR.Protocol;
 
 namespace OrgnalR.Core.Provider
 {
-    public class AllMessage
+    public class AddressedMessage
     {
-        public ISet<string> Excluding { get; }
+        public string ConnectionId { get; }
         public HubInvocationMessage Payload { get; }
-        public AllMessage(ISet<string> excluding, HubInvocationMessage messagePayload)
+        public AddressedMessage(string connectionId, HubInvocationMessage messagePayload)
         {
-            Excluding = excluding;
+            ConnectionId = connectionId;
             Payload = messagePayload;
         }
     }

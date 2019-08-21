@@ -4,10 +4,10 @@ using OrgnalR.Core.Provider;
 
 namespace OrgnalR.Core.State
 {
-    public interface IGroupActor
+    public interface IUserActor
     {
-        Task AddToGroupAsync(string connectionId, CancellationToken cancellationToken = default);
-        Task RemoveFromGroupAsync(string connectionId, CancellationToken cancellationToken = default);
+        Task AddToUserAsync(string connectionId, CancellationToken cancellationToken = default);
+        Task RemoveFromUserAsync(string connectionId, CancellationToken cancellationToken = default);
         Task AcceptMessageAsync(AnonymousMessage targetedMessage, CancellationToken cancellationToken = default);
     }
 }

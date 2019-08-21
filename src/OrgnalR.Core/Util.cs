@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -23,6 +24,12 @@ namespace OrgnalR.Core
             {
                 // ignored
             }
+        }
+
+
+        public static ISet<T> ToSet<T>(this IEnumerable<T> items)
+        {
+            return new HashSet<T>(items);
         }
     }
 }
