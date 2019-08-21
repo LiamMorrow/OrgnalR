@@ -43,7 +43,7 @@ namespace OrgnalR.Backplane
             )
         {
             var manager = new OrleansHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver);
-            manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(manager.OnAnonymousMessageReceived, manager.OnAnonymousSubscriptionEnd, cancellationToken);
+            manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(manager.OnAnonymousMessageReceived, manager.OnAnonymousSubscriptionEnd, cancellationToken).ConfigureAwait(false);
             return manager;
         }
 
