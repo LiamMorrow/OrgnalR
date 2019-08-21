@@ -21,12 +21,12 @@ namespace OrgnalR.Backplane.GrainAdaptors
         }
         public IGroupActor GetGroupActor(string groupName)
         {
-            return new GrainGroupActor(grainFactory.GetGrain<IGroupActorGrain>($"{hubName}::{groupName}"));
+            return new GrainGroupActor(hubName, grainFactory.GetGrain<IGroupActorGrain>($"{hubName}::{groupName}"));
         }
 
         public IUserActor GetUserActor(string userId)
         {
-            return new GrainUserActor(grainFactory.GetGrain<IUserActorGrain>($"{hubName}::{userId}"));
+            return new GrainUserActor(hubName, grainFactory.GetGrain<IUserActorGrain>($"{hubName}::{userId}"));
         }
     }
 }

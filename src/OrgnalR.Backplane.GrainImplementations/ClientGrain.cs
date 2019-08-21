@@ -10,6 +10,12 @@ namespace OrgnalR.Backplane.GrainImplementations
     {
         private readonly HashSet<IClientMessageObserver> observers = new HashSet<IClientMessageObserver>();
 
+        public override Task OnActivateAsync()
+        {
+            return base.OnActivateAsync();
+
+        }
+
         public override Task OnDeactivateAsync()
         {
             foreach (var observer in observers)

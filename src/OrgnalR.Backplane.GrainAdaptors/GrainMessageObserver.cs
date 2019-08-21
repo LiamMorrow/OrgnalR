@@ -1,7 +1,9 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core.Provider;
+using OrgnalR.Core;
 using Orleans;
 
 namespace OrgnalR.Backplane.GrainAdaptors
@@ -37,6 +39,10 @@ namespace OrgnalR.Backplane.GrainAdaptors
             {
                 cancellationToken.Register(() => token.Cancel());
             }
+            var hubNamespacesAllMessage = new AnonymousMessage(
+                allMessage.Excluding.Select(id => $"{hubName}::{id}").ToSet(),
+                allMessage.Payload
+                );
             return grainFactory.GetGrain<IAnonymousMessageGrain>(hubName).AcceptMessageAsync(allMessage, token.Token);
         }
     }
