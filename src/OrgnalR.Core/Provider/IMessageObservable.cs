@@ -6,9 +6,9 @@ namespace OrgnalR.Core.Provider
 {
     public interface IMessageObservable
     {
-        Task<SubscriptionHandle> SubscribeToAllAsync(Func<AnonymousMessage, Task> messageCallback, CancellationToken cancellationToken = default);
+        Task<SubscriptionHandle> SubscribeToAllAsync(Func<AnonymousMessage, Task> messageCallback, Func<SubscriptionHandle, Task> onSubscriptionEnd, CancellationToken cancellationToken = default);
         Task UnsubscribeFromAllAsync(SubscriptionHandle subscriptionHandle, CancellationToken cancellationToken = default);
-        Task SubscribeToConnectionAsync(string connectionId, Func<AddressedMessage, Task> messageCallback, CancellationToken cancellationToken = default);
+        Task SubscribeToConnectionAsync(string connectionId, Func<AddressedMessage, Task> messageCallback, Func<string, Task> onSubscriptionEnd, CancellationToken cancellationToken = default);
         Task UnsubscribeFromSpecificAsync(string connectionId, CancellationToken cancellationToken = default);
     }
 

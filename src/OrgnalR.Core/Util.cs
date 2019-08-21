@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OrgnalR.Core
@@ -30,6 +31,21 @@ namespace OrgnalR.Core
         public static ISet<T> ToSet<T>(this IEnumerable<T> items)
         {
             return new HashSet<T>(items);
+        }
+
+
+        public static Task WithCancellation(this Task source, CancellationToken cancellationToken)
+        {
+            if (source.IsCompleted)
+            {
+                return source;
+            }
+            var cancellationTask = new TaskCompletionSource<int>();
+            cancellationToken.Register(() => cancellationTask.TrySetException(new TaskCanceledException(source)));
+            return Task.WhenAny(
+                source,
+                cancellationTask.Task
+            );
         }
     }
 }
