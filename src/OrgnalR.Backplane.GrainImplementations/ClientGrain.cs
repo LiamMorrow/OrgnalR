@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Protocol;
@@ -8,7 +9,11 @@ namespace OrgnalR.Backplane.GrainImplementations
 {
     public class ClientGrain : Grain, IClientGrain
     {
-        private readonly HashSet<IClientMessageObserver> observers = new HashSet<IClientMessageObserver>();
+        private readonly GrainObserverManager<IClientMessageObserver> observers = new GrainObserverManager<IClientMessageObserver>
+        {
+            ExpirationDuration = TimeSpan.MaxValue,
+            OnFailBeforeDefunct = x => x.SubscriptionEnded()
+        };
 
         public override Task OnActivateAsync()
         {
@@ -27,23 +32,19 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         public Task AcceptMessageAsync(HubInvocationMessage message, GrainCancellationToken cancellationToken)
         {
-            foreach (var observer in observers)
-            {
-                cancellationToken.CancellationToken.ThrowIfCancellationRequested();
-                observer.ReceiveMessage(message);
-            }
+            observers.Notify(x => x.ReceiveMessage(message));
             return Task.CompletedTask;
         }
 
         public Task SubscribeToMessages(IClientMessageObserver observer)
         {
-            observers.Add(observer);
+            observers.Subscribe(observer);
             return Task.CompletedTask;
         }
 
         public Task UnsubscribeFromMessages(IClientMessageObserver observer)
         {
-            observers.Remove(observer);
+            observers.Unsubscribe(observer);
             return Task.CompletedTask;
         }
 

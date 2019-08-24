@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OrgnalR.Backplane.GrainInterfaces;
@@ -8,7 +9,11 @@ namespace OrgnalR.Backplane.GrainImplementations
 {
     public class AnonymousMessageGrain : Grain, IAnonymousMessageGrain
     {
-        private readonly HashSet<IAnonymousMessageObserver> observers = new HashSet<IAnonymousMessageObserver>();
+        private readonly GrainObserverManager<IAnonymousMessageObserver> observers = new GrainObserverManager<IAnonymousMessageObserver>
+        {
+            ExpirationDuration = TimeSpan.MaxValue,
+            OnFailBeforeDefunct = x => x.SubscriptionEnded()
+        };
 
         public override Task OnDeactivateAsync()
         {
@@ -21,23 +26,19 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         public Task AcceptMessageAsync(AnonymousMessage message, GrainCancellationToken cancellationToken)
         {
-            foreach (var observer in observers)
-            {
-                cancellationToken.CancellationToken.ThrowIfCancellationRequested();
-                observer.ReceiveMessage(message);
-            }
+            observers.Notify(x => x.ReceiveMessage(message));
             return Task.CompletedTask;
         }
 
         public Task SubscribeToMessages(IAnonymousMessageObserver observer)
         {
-            observers.Add(observer);
+            observers.Subscribe(observer);
             return Task.CompletedTask;
         }
 
         public Task UnsubscribeFromMessages(IAnonymousMessageObserver observer)
         {
-            observers.Remove(observer);
+            observers.Unsubscribe(observer);
             return Task.CompletedTask;
         }
     }
