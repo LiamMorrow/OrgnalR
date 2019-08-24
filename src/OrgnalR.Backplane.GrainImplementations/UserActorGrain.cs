@@ -45,13 +45,13 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         public Task AddToUserAsync(string connectionId, GrainCancellationToken cancellationToken)
         {
-            dirty = dirty || State.ConnectionIds.Add(connectionId);
+            dirty = State.ConnectionIds.Add(connectionId) || dirty;
             return Task.CompletedTask;
         }
 
         public Task RemoveFromUserAsync(string connectionId, GrainCancellationToken cancellationToken)
         {
-            dirty = dirty || State.ConnectionIds.Remove(connectionId);
+            dirty = State.ConnectionIds.Remove(connectionId) || dirty;
             return Task.CompletedTask;
         }
 

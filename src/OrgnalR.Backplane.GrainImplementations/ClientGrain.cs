@@ -15,12 +15,6 @@ namespace OrgnalR.Backplane.GrainImplementations
             OnFailBeforeDefunct = x => x.SubscriptionEnded()
         };
 
-        public override Task OnActivateAsync()
-        {
-            return base.OnActivateAsync();
-
-        }
-
         public override Task OnDeactivateAsync()
         {
             foreach (var observer in observers)
