@@ -110,15 +110,6 @@ namespace OrgnalR.Backplane.GrainImplementations
                 {
                     // Failing observers are considered defunct and will be removed..
                     defunct ??= new List<T>();
-                    try
-                    {
-                        OnFailBeforeDefunct?.Invoke(observer.Key);
-                    }
-                    catch (Exception)
-                    {
-                        // TODO logging
-                        // Do nothing. Sad days
-                    }
                     defunct.Add(observer.Key);
                 }
             }
@@ -128,6 +119,15 @@ namespace OrgnalR.Backplane.GrainImplementations
             {
                 foreach (var observer in defunct)
                 {
+                    try
+                    {
+                        OnFailBeforeDefunct?.Invoke(observer);
+                    }
+                    catch (Exception)
+                    {
+                        // TODO logging
+                        // Do nothing. Sad days
+                    }
                     this.observers.Remove(observer);
                 }
             }
@@ -168,15 +168,6 @@ namespace OrgnalR.Backplane.GrainImplementations
                 {
                     // Failing observers are considered defunct and will be removed..
                     defunct ??= new List<T>();
-                    try
-                    {
-                        OnFailBeforeDefunct?.Invoke(observer.Key);
-                    }
-                    catch (Exception)
-                    {
-                        // TODO logging
-                        // Do nothing. Sad days.
-                    }
                     defunct.Add(observer.Key);
                 }
             }
@@ -186,6 +177,15 @@ namespace OrgnalR.Backplane.GrainImplementations
             {
                 foreach (var observer in defunct)
                 {
+                    try
+                    {
+                        OnFailBeforeDefunct?.Invoke(observer);
+                    }
+                    catch (Exception)
+                    {
+                        // TODO logging
+                        // Do nothing. Sad days.
+                    }
                     this.observers.Remove(observer);
                 }
             }
@@ -213,6 +213,15 @@ namespace OrgnalR.Backplane.GrainImplementations
             {
                 foreach (var observer in defunct)
                 {
+                    try
+                    {
+                        OnFailBeforeDefunct?.Invoke(observer);
+                    }
+                    catch (Exception)
+                    {
+                        // TODO logging
+                        // Do nothing. Sad days.
+                    }
                     this.observers.Remove(observer);
                 }
             }
