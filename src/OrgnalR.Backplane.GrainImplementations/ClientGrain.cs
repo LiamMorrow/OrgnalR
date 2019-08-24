@@ -11,7 +11,7 @@ namespace OrgnalR.Backplane.GrainImplementations
     {
         private readonly GrainObserverManager<IClientMessageObserver> observers = new GrainObserverManager<IClientMessageObserver>
         {
-            ExpirationDuration = TimeSpan.MaxValue,
+            ExpirationDuration = TimeSpan.FromMinutes(5),
             OnFailBeforeDefunct = x => x.SubscriptionEnded()
         };
 
