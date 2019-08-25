@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using OrgnalR.Backplane.GrainInterfaces;
@@ -7,13 +7,13 @@ using Orleans;
 
 namespace OrgnalR.Backplane.GrainAdaptors
 {
-    public class DelegateClientGrainMessageObserver : IClientMessageObserver
+    public class DelegateClientMessageObserver : IClientMessageObserver
     {
         private readonly string connectionId;
         private readonly Func<AddressedMessage, Task> messageCallback;
         private readonly Func<string, Task> onSubscriptionEnded;
 
-        public DelegateClientGrainMessageObserver(string connectionId, Func<AddressedMessage, Task> messageCallback, Func<string, Task> onSubscriptionEnded)
+        public DelegateClientMessageObserver(string connectionId, Func<AddressedMessage, Task> messageCallback, Func<string, Task> onSubscriptionEnded)
         {
             this.connectionId = connectionId ?? throw new ArgumentNullException(nameof(connectionId));
             this.messageCallback = messageCallback ?? throw new ArgumentNullException(nameof(messageCallback));

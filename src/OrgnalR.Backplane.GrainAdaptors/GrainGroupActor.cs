@@ -20,16 +20,16 @@ namespace OrgnalR.Backplane.GrainAdaptors
             this.groupActorGrain = groupActorGrain;
         }
 
-        public Task AcceptMessageAsync(AnonymousMessage targetedMessage, CancellationToken cancellationToken = default)
+        public Task AcceptMessageAsync(AnonymousMessage message, CancellationToken cancellationToken = default)
         {
-            targetedMessage = new AnonymousMessage(targetedMessage.Excluding.Select(x => $"{hubName}::{x}").ToSet(), targetedMessage.Payload);
+            message = new AnonymousMessage(message.Excluding.Select(x => $"{hubName}::{x}").ToSet(), message.Payload);
             var token = new GrainCancellationTokenSource();
             if (cancellationToken != default)
             {
                 cancellationToken.Register(() => token.Cancel());
             }
 
-            return groupActorGrain.AcceptMessageAsync(targetedMessage, token.Token);
+            return groupActorGrain.AcceptMessageAsync(message, token.Token);
         }
 
         public Task AddToGroupAsync(string connectionId, CancellationToken cancellationToken = default)

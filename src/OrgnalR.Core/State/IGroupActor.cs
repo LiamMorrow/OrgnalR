@@ -8,6 +8,6 @@ namespace OrgnalR.Core.State
     {
         Task AddToGroupAsync(string connectionId, CancellationToken cancellationToken = default);
         Task RemoveFromGroupAsync(string connectionId, CancellationToken cancellationToken = default);
-        Task AcceptMessageAsync(AnonymousMessage targetedMessage, CancellationToken cancellationToken = default);
+        Task AcceptMessageAsync(AnonymousMessage message, CancellationToken cancellationToken = default);
     }
 }

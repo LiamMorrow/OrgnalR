@@ -14,7 +14,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
         public GrainActorProvider(
             string hubName,
             IGrainFactory grainFactory
-            )
+        )
         {
             this.hubName = hubName ?? throw new ArgumentNullException(nameof(hubName));
             this.grainFactory = grainFactory ?? throw new ArgumentNullException(nameof(grainFactory));

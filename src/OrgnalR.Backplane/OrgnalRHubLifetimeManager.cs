@@ -11,7 +11,11 @@ using OrgnalR.Core.Provider;
 
 namespace OrgnalR.Backplane
 {
-    public class OrleansHubLifetimeManager<THub> : HubLifetimeManager<THub>, IDisposable where THub : Hub
+    /// <summary>
+    /// Implements a SignalR hub backplane through a pub sub mechanism
+    /// </summary>
+    /// <typeparam name="THub">The hub type this is applicable to</typeparam>
+    public class OrgnalRHubLifetimeManager<THub> : HubLifetimeManager<THub>, IDisposable where THub : Hub
     {
         private bool disposed;
         private readonly HubConnectionStore hubConnectionStore = new HubConnectionStore();
@@ -21,7 +25,7 @@ namespace OrgnalR.Backplane
         private readonly IMessageObserver messageObserver;
         private SubscriptionHandle? allSubscriptionHandle;
 
-        private OrleansHubLifetimeManager(
+        private OrgnalRHubLifetimeManager(
             IGroupActorProvider groupActorProvider,
             IUserActorProvider userActorProvider,
             IMessageObservable messageObservable,
@@ -33,8 +37,16 @@ namespace OrgnalR.Backplane
             this.messageObservable = messageObservable ?? throw new ArgumentNullException(nameof(messageObservable));
             this.messageObserver = messageObserver ?? throw new ArgumentNullException(nameof(messageObserver));
         }
-
-        public static async Task<OrleansHubLifetimeManager<THub>> CreateAsync(
+        /// <summary>
+        /// Create an instance of this class and subscribes to messages that are broadcasted to the "all" stream for the hub
+        /// </summary>
+        /// <param name="groupActorProvider"></param>
+        /// <param name="userActorProvider"></param>
+        /// <param name="messageObservable"></param>
+        /// <param name="messageObserver"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A new instance off <see cref="OrgnalRHubLifetimeManager<THub>" /> that is </returns>
+        public static async Task<OrgnalRHubLifetimeManager<THub>> CreateAsync(
             IGroupActorProvider groupActorProvider,
             IUserActorProvider userActorProvider,
             IMessageObservable messageObservable,
@@ -42,7 +54,7 @@ namespace OrgnalR.Backplane
             CancellationToken cancellationToken = default
             )
         {
-            var manager = new OrleansHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver);
+            var manager = new OrgnalRHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver);
             manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(manager.OnAnonymousMessageReceived, manager.OnAnonymousSubscriptionEnd, cancellationToken).ConfigureAwait(false);
             return manager;
         }
@@ -67,7 +79,7 @@ namespace OrgnalR.Backplane
                 await userActorProvider.GetUserActor(connection.UserIdentifier)
                     .RemoveFromUserAsync(connection.ConnectionId);
             }
-            await messageObservable.UnsubscribeFromSpecificAsync(connection.ConnectionId);
+            await messageObservable.UnsubscribeFromConnectionAsync(connection.ConnectionId);
         }
 
         public override Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
@@ -151,16 +163,20 @@ namespace OrgnalR.Backplane
         private Task OnAddressedMessageReceived(AddressedMessage arg)
         {
             var conn = hubConnectionStore[arg.ConnectionId];
-            if (conn == null) return Task.CompletedTask;
-            if (conn.ConnectionAborted.IsCancellationRequested) return Task.CompletedTask;
+            if (conn == null)
+                return Task.CompletedTask;
+            if (conn.ConnectionAborted.IsCancellationRequested)
+                return Task.CompletedTask;
             return conn.WriteAsync(arg.Payload).AsTask();
         }
 
         private Task OnClientSubscriptionEnd(string connectionId)
         {
             var conn = hubConnectionStore[connectionId];
-            if (conn == null) return Task.CompletedTask;
-            if (conn.ConnectionAborted.IsCancellationRequested) return Task.CompletedTask;
+            if (conn == null)
+                return Task.CompletedTask;
+            if (conn.ConnectionAborted.IsCancellationRequested)
+                return Task.CompletedTask;
             return OnConnectedAsync(conn);
         }
 
@@ -174,8 +190,10 @@ namespace OrgnalR.Backplane
             var toAwait = new List<ValueTask>();
             foreach (var conn in hubConnectionStore)
             {
-                if (msg.Excluding.Contains(conn.ConnectionId)) continue;
-                if (conn.ConnectionAborted.IsCancellationRequested) continue;
+                if (msg.Excluding.Contains(conn.ConnectionId))
+                    continue;
+                if (conn.ConnectionAborted.IsCancellationRequested)
+                    continue;
                 toAwait.Add(conn.WriteAsync(msg.Payload));
             }
             return Task.WhenAll(toAwait.Where(vt => !vt.IsCompleted).Select(vt => vt.AsTask()));
@@ -183,7 +201,8 @@ namespace OrgnalR.Backplane
 
         public async ValueTask DisposeAsync()
         {
-            if (disposed) return;
+            if (disposed)
+                return;
             if (allSubscriptionHandle != null)
             {
                 await messageObservable.UnsubscribeFromAllAsync(allSubscriptionHandle);
@@ -195,7 +214,8 @@ namespace OrgnalR.Backplane
         [Obsolete("Use DisposeAsync instead")]
         public void Dispose()
         {
-            if (disposed) return;
+            if (disposed)
+                return;
             DisposeAsync().AsTask().Wait();
         }
     }
