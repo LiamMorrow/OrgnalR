@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <LangVersion>8.0</LangVersion>
+        <NullableContextOptions>enable</NullableContextOptions>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup></ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\OrgnalR.Backplane.GrainImplementations\OrgnalR.Backplane.GrainImplementations.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="2.4.1" />
+    </ItemGroup>
+</Project>
