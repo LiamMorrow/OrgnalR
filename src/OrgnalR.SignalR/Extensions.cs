@@ -6,13 +6,28 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using OrgnalR.Backplane;
 using OrgnalR.Backplane.GrainAdaptors;
+using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core.Provider;
 using OrgnalR.Core.State;
 using Orleans;
 
 namespace OrgnalR.SignalR
 {
-    public static class Extensions
+    public static class SiloClientExtensions
+    {
+        /// <summary>
+        /// Configures the Orleans client to use the OrgnalR grain interfaces
+        /// </summary>
+        /// <param name="builder">The orleans client builder to configure</param>
+        /// <returns>The configured orleans client builder</returns>
+        public static IClientBuilder UseOrgnalR(this IClientBuilder builder)
+        {
+            builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IAnonymousMessageGrain).Assembly));
+            return builder;
+        }
+
+    }
+    public static class SignalRExtensions
     {
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace OrgnalR.Silo
         /// </summary>
         /// <param name="builder">The builder to configure</param>
         /// <returns>The silo builder, configured with memory storage and grains for the OrgnalR backplane</returns>
-        public static T AddOrgnalRWithMemoryGrainStorage<T>(this T builder) where T : ISiloHostBuilder
+        public static ISiloHostBuilder AddOrgnalRWithMemoryGrainStorage(this ISiloHostBuilder builder)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace OrgnalR.Silo
         /// </summary>
         /// <param name="builder">The builder to configure</param>
         /// <returns>The silo builder, configured with grains for the OrgnalR backplane</returns>
-        public static T AddOrgnalR<T>(this T builder) where T : ISiloHostBuilder
+        public static ISiloHostBuilder AddOrgnalR(this ISiloHostBuilder builder)
         {
             builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(AnonymousMessageGrain).Assembly).WithReferences());
             return builder;
