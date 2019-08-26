@@ -6,6 +6,23 @@
         <NullableContextOptions>enable</NullableContextOptions>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+    <PropertyGroup>
+        <PackageId>OrgnalR.SignalR</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Liam Morrow</Authors>
+        <Title>
+        OrgnalR SignalR
+        </Title>
+        <Description>
+        The SignalR library for OrgnalR.  This is the package you'd want on the SignalR server.
+        For the Orleans Silo, use OrgnalR.OrleansSilo
+        </Description>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <IncludeSource>true</IncludeSource>
+        <RepositoryUrl>https://github.com/LiamMorrow/OrgnalR</RepositoryUrl>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
         <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="2.4.1" />
