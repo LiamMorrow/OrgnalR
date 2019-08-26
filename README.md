@@ -15,5 +15,62 @@ OrgnalR comes in two packages, one for the Orleans Silo, and one for the SignalR
 ```
 dotnet add package OrgnalR.SignalR
 ``` 
+#### Orleans Silo
+
+```
+dotnet add package OrgnalR.OrleansSilo
+``` 
+
+### Configuring
+
 OrgnalR can be configured via extension methods on both the Orleans client/silo builders, and the SignalR builder.  
 
+#### SignalR
+Somewhere in your `Startup.cs` (or wherever you configure your SignalR server), you will need to add two extension methods.  One on the SignalR builder, and one on the Orleans ClientBuilder.  These extension methods live in the `OrgnalR.SignalR` namespace, so be sure to add a using for that namespace.
+```c#
+using OrgnalR.SignalR;
+class Startup {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            /* All your other services */
+            services.AddSingleton<IClusterClient>(serviceProvider =>
+            {
+                return new ClientBuilder()
+                /* Your other orleans client configuration */
+                    .UseOrgnalR()
+                    .Build();
+            });
+            services.AddSignalR()
+                    .UseOrgnalR();
+        }
+}
+```
+That's it on the SignalR side.  There is no difference between a production and a development environment for the SignalR client.
+
+#### Orleans Silo
+Wherever you configure your orleans Silo, you will need to configure OrgnalR's grains.  This is again accomplished by an extension method, however there are two different modes.  For development, it is easiest to use the `AddOrgnalRWithMemoryGrainStorage` extension method, which registers the storage providers for the grains with memory storage.  This is undesirable for production as if the silo dies, the information on connections in which groups is lost.  
+
+For production usage it is best to configure actual persistent storage for `ORGNALR_USER_STORAGE` and `ORGNALR_GROUP_STORAGE`, then use the `AddOrgnalR` extension method.  
+
+Both of these methods are found in the `OrgnalR.Silo` namespace.
+
+##### Development
+```c#
+var builder = new SiloHostBuilder()
+/* Your other configuration options */
+// Note here we use the memory storage option.
+// This is good for quick development, but we should register proper storage for production 
+                .AddOrgnalRWithMemoryGrainStorage()
+```
+##### Production
+```c#
+var builder = new SiloHostBuilder()
+/* Your other configuration options */
+// Note here we specify the storage we will use for group and user membership
+                .ConfigureServices(services =>
+                {
+                    services.AddSingletonNamedService<IGrainStorage, YourStorageProvider>(Extensions.USER_STORAGE_PROVIDER);
+                    services.AddSingletonNamedService<IGrainStorage, YourStorageProvider>(Extensions.GROUP_STORAGE_PROVIDER);
+                })
+                .AddOrgnalR()
+```
