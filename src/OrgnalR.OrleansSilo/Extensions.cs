@@ -7,6 +7,8 @@ namespace OrgnalR.Silo
 {
     public static class Extensions
     {
+        public const string GROUP_STORAGE_PROVIDER = Constants.GROUP_STORAGE_PROVIDER;
+        public const string USER_STORAGE_PROVIDER = Constants.USER_STORAGE_PROVIDER;
         /// <summary>
         /// Adds the OrgnalR grains to the builder, and also automatically registers memory grain storage for group and user lists.
         /// This is useful for local development, however it is recommended that you add a persistent storage for:
