@@ -74,3 +74,8 @@ var builder = new SiloHostBuilder()
                 })
                 .AddOrgnalR()
 ```
+
+And that's it!  Your SignalR server will now use the OrgnalR backplane to send messages, and maintain groups / users.
+
+# Contributing
+Contributions are welcome! Simply fork the repository, and submit a PR.  If you have an issue, feel free to submit an issue :)
