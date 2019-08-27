@@ -80,7 +80,7 @@ namespace OrgnalR.SignalR
         public class MessageObserverFactory<T> : IMessageObserver<T>
         {
             readonly GrainMessageObserver @delegate;
-            public MessageObserverFactory(GrainFactoryProvider grainFactory)
+            public MessageObserverFactory(IGrainFactoryProvider grainFactory)
             {
                 @delegate = new GrainMessageObserver(typeof(T).Name, grainFactory.GetGrainFactory());
             }
@@ -97,7 +97,7 @@ namespace OrgnalR.SignalR
         public class MessageObservableFactory<T> : IMessageObservable<T>
         {
             readonly GrainMessageObservable @delegate;
-            public MessageObservableFactory(GrainFactoryProvider grainFactory)
+            public MessageObservableFactory(IGrainFactoryProvider grainFactory)
             {
                 @delegate = new GrainMessageObservable(typeof(T).Name, grainFactory.GetGrainFactory());
             }
@@ -126,7 +126,7 @@ namespace OrgnalR.SignalR
         public class GroupActorProviderFactory<T> : IGroupActorProvider<T>, IUserActorProvider<T>
         {
             readonly GrainActorProvider @delegate;
-            public GroupActorProviderFactory(GrainFactoryProvider grainFactory)
+            public GroupActorProviderFactory(IGrainFactoryProvider grainFactory)
             {
                 @delegate = new GrainActorProvider(typeof(T).Name, grainFactory.GetGrainFactory());
             }
