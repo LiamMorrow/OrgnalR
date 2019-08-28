@@ -4,7 +4,7 @@ OrgnalR is a backplane for [SignalR core](https://github.com/aspnet/AspNetCore/t
 It allows your SignalR servers to scale out with all the capacity of Orleans grains.
 
 This is an alternative to the Redis backplane.  
-Inspiration was taken from the original Orleans backplane, [SignalR.Orleans](https://github.com/OrleansContrib/SignalR.Orleans). I'm very grateful for its existence, however I ran into hard to debug issues with the orleans streams that I was unable to resolve.
+Inspiration was taken from the original Orleans backplane, [SignalR.Orleans](https://github.com/OrleansContrib/SignalR.Orleans). OrgnalR came about due to running into hard to debug issues with orleans streams that seemed unresolvable without a complete rewrite, however major props to the writers of the original library.
 
 ## Getting started
 
