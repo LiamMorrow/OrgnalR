@@ -70,7 +70,15 @@ namespace OrgnalR.Backplane
                 await userActorProvider.GetUserActor(connection.UserIdentifier)
                     .AddToUserAsync(connection.ConnectionId);
             }
-            await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, latestClientMessageHandle);
+            try
+            {
+                await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, latestClientMessageHandle);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // TODO logging
+                await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, default);
+            }
         }
 
 
@@ -192,7 +200,15 @@ namespace OrgnalR.Backplane
 
         private async Task OnAnonymousSubscriptionEnd(SubscriptionHandle _)
         {
-            allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, latestAllMessageHandle, default);
+            try
+            {
+                allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, latestAllMessageHandle, default);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, default, default);
+                // TODO logging
+            }
         }
 
         private async Task OnAnonymousMessageReceived(AnonymousMessage msg, MessageHandle handle)
