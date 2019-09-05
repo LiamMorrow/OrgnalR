@@ -2,6 +2,8 @@
 using Orleans.Hosting;
 using OrgnalR.Backplane.GrainImplementations;
 using Orleans;
+using OrgnalR.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OrgnalR.Silo
 {
@@ -9,6 +11,10 @@ namespace OrgnalR.Silo
     {
         public const string GROUP_STORAGE_PROVIDER = Constants.GROUP_STORAGE_PROVIDER;
         public const string USER_STORAGE_PROVIDER = Constants.USER_STORAGE_PROVIDER;
+        /// <summary>
+        /// This will store messages for each SignalR message stream, allowing clients to resubscribe without missing any messages
+        /// This is a best effort resubscribe, and can be configured via <see cref="OrgnalRSiloConfig"/>
+        /// </summary>
         public const string MESSAGE_STORAGE_PROVIDER = Constants.MESSAGE_STORAGE_PROVIDER;
         /// <summary>
         /// Adds the OrgnalR grains to the builder, and also automatically registers memory grain storage for group and user lists.
@@ -18,7 +24,7 @@ namespace OrgnalR.Silo
         /// </summary>
         /// <param name="builder">The builder to configure</param>
         /// <returns>The silo builder, configured with memory storage and grains for the OrgnalR backplane</returns>
-        public static ISiloHostBuilder AddOrgnalRWithMemoryGrainStorage(this ISiloHostBuilder builder)
+        public static ISiloHostBuilder AddOrgnalRWithMemoryGrainStorage(this ISiloHostBuilder builder, Action<OrgnalRSiloConfig>? configure = null)
         {
             try
             {
@@ -36,7 +42,7 @@ namespace OrgnalR.Silo
             }
             catch { /* Do nothing, already added  */}
 
-            return builder.AddOrgnalR();
+            return builder.AddOrgnalR(configure);
         }
 
         /// <summary>
@@ -47,8 +53,17 @@ namespace OrgnalR.Silo
         /// </summary>
         /// <param name="builder">The builder to configure</param>
         /// <returns>The silo builder, configured with grains for the OrgnalR backplane</returns>
-        public static ISiloHostBuilder AddOrgnalR(this ISiloHostBuilder builder)
+        public static ISiloHostBuilder AddOrgnalR(this ISiloHostBuilder builder, Action<OrgnalRSiloConfig>? configure = null)
         {
+            builder.ConfigureServices((_, services) =>
+            {
+                var conf = new OrgnalRSiloConfig
+                {
+                    MaxMessageRewind = 10
+                };
+                configure?.Invoke(conf);
+                services.Add(new ServiceDescriptor(typeof(OrgnalRSiloConfig), conf));
+            });
             builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(AnonymousMessageGrain).Assembly).WithReferences());
             return builder;
         }
