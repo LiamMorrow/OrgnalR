@@ -1,5 +1,6 @@
 # OrgnalR
 
+[![Actions Status](https://github.com/LiamMorrow/OrgnalR/workflows/build/badge.svg)](https://github.com/LiamMorrow/OrgnalR/actions)
 OrgnalR is a backplane for [SignalR core](https://github.com/aspnet/AspNetCore/tree/master/src/SignalR), implemented through [Orleans](https://github.com/dotnet/orleans)!  
 It allows your SignalR servers to scale out with all the capacity of Orleans grains.
 
