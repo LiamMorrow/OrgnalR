@@ -26,8 +26,9 @@ namespace OrgnalR.Backplane.GrainAdaptors
             this.grainFactory = grainFactory ?? throw new ArgumentNullException(nameof(grainFactory));
         }
         public async Task<SubscriptionHandle> SubscribeToAllAsync(
-            Func<AnonymousMessage, Task> messageCallback,
+            Func<AnonymousMessage, MessageHandle, Task> messageCallback,
             Func<SubscriptionHandle, Task> onSubscriptionEnd,
+            MessageHandle since = default,
             CancellationToken cancellationToken = default
         )
         {
@@ -36,7 +37,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
             var handlerRef = await grainFactory.CreateObjectReference<IAnonymousMessageObserver>(handler).ConfigureAwait(false);
             anonymousObservers[handle.SubscriptionId] = (handler, handlerRef);
             var messageGrain = grainFactory.GetGrain<IAnonymousMessageGrain>(hubName);
-            await messageGrain.SubscribeToMessages(handlerRef).ConfigureAwait(false);
+            await messageGrain.SubscribeToMessages(handlerRef, since).ConfigureAwait(false);
             return handle;
         }
 
@@ -50,13 +51,18 @@ namespace OrgnalR.Backplane.GrainAdaptors
             await messageGrain.UnsubscribeFromMessages(handler.obj).ConfigureAwait(false);
         }
 
-        public async Task SubscribeToConnectionAsync(string connectionId, Func<AddressedMessage, Task> messageCallback, Func<string, Task> onSubscriptionEnd, CancellationToken cancellationToken = default)
+        public async Task SubscribeToConnectionAsync(
+            string connectionId,
+            Func<AddressedMessage, MessageHandle, Task> messageCallback,
+            Func<string, Task> onSubscriptionEnd,
+            MessageHandle since = default,
+            CancellationToken cancellationToken = default)
         {
             var handler = new DelegateClientMessageObserver(connectionId, messageCallback, onSubscriptionEnd);
             var handlerRef = await grainFactory.CreateObjectReference<IClientMessageObserver>(handler).ConfigureAwait(false);
             clientObservers[connectionId] = (handler, handlerRef);
             var messageGrain = grainFactory.GetGrain<IClientGrain>($"{hubName}::{connectionId}");
-            await messageGrain.SubscribeToMessages(handlerRef).ConfigureAwait(false);
+            await messageGrain.SubscribeToMessages(handlerRef, since).ConfigureAwait(false);
         }
 
         public async Task UnsubscribeFromConnectionAsync(string connectionId, CancellationToken cancellationToken = default)

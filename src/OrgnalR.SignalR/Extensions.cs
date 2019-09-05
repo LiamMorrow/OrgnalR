@@ -102,14 +102,24 @@ namespace OrgnalR.SignalR
                 @delegate = new GrainMessageObservable(typeof(T).Name, grainFactory.GetGrainFactory());
             }
 
-            public Task<SubscriptionHandle> SubscribeToAllAsync(Func<AnonymousMessage, Task> messageCallback, Func<SubscriptionHandle, Task> onSubscriptionEnd, CancellationToken cancellationToken = default)
+            public Task<SubscriptionHandle> SubscribeToAllAsync(
+                Func<AnonymousMessage, MessageHandle, Task> messageCallback,
+                Func<SubscriptionHandle, Task> onSubscriptionEnd,
+                MessageHandle since = default,
+                CancellationToken cancellationToken = default
+            )
             {
-                return @delegate.SubscribeToAllAsync(messageCallback, onSubscriptionEnd, cancellationToken);
+                return @delegate.SubscribeToAllAsync(messageCallback, onSubscriptionEnd, since, cancellationToken);
             }
 
-            public Task SubscribeToConnectionAsync(string connectionId, Func<AddressedMessage, Task> messageCallback, Func<string, Task> onSubscriptionEnd, CancellationToken cancellationToken = default)
+            public Task SubscribeToConnectionAsync(string connectionId,
+            Func<AddressedMessage, MessageHandle, Task> messageCallback,
+            Func<string, Task> onSubscriptionEnd,
+            MessageHandle since = default,
+            CancellationToken cancellationToken = default
+            )
             {
-                return @delegate.SubscribeToConnectionAsync(connectionId, messageCallback, onSubscriptionEnd, cancellationToken);
+                return @delegate.SubscribeToConnectionAsync(connectionId, messageCallback, onSubscriptionEnd, since, cancellationToken);
             }
 
             public Task UnsubscribeFromAllAsync(SubscriptionHandle subscriptionHandle, CancellationToken cancellationToken = default)

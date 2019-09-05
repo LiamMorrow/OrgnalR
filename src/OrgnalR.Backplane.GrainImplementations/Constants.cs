@@ -4,5 +4,6 @@ namespace OrgnalR.Backplane.GrainImplementations
     {
         public const string GROUP_STORAGE_PROVIDER = "ORGNALR_GROUP_STORAGE";
         public const string USER_STORAGE_PROVIDER = "ORGNALR_USER_STORAGE";
+        public const string MESSAGE_STORAGE_PROVIDER = "ORGNALR_MESSAGE_STORAGE";
     }
 }

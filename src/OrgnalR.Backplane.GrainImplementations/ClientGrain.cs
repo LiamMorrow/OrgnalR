@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using OrgnalR.Backplane.GrainInterfaces;
+using OrgnalR.Core.Provider;
 using Orleans;
 
 namespace OrgnalR.Backplane.GrainImplementations
@@ -15,6 +16,14 @@ namespace OrgnalR.Backplane.GrainImplementations
             OnFailBeforeDefunct = x => x.SubscriptionEnded()
         };
 
+        private IRewindableMessageGrain<HubInvocationMessage> rewoundMessagesGrain = null!;
+
+        public override Task OnActivateAsync()
+        {
+            rewoundMessagesGrain = GrainFactory.GetGrain<IRewindableMessageGrain<HubInvocationMessage>>(this.GetPrimaryKeyString());
+            return base.OnActivateAsync();
+        }
+
         public override Task OnDeactivateAsync()
         {
             foreach (var observer in observers)
@@ -24,16 +33,22 @@ namespace OrgnalR.Backplane.GrainImplementations
             return base.OnDeactivateAsync();
         }
 
-        public Task AcceptMessageAsync(HubInvocationMessage message, GrainCancellationToken cancellationToken)
+        public async Task AcceptMessageAsync(HubInvocationMessage message, GrainCancellationToken cancellationToken)
         {
-            observers.Notify(x => x.ReceiveMessage(message));
-            return Task.CompletedTask;
+            var handle = await rewoundMessagesGrain.PushMessageAsync(message);
+            observers.Notify(x => x.ReceiveMessage(message, handle));
         }
 
-        public Task SubscribeToMessages(IClientMessageObserver observer)
+        public async Task SubscribeToMessages(IClientMessageObserver observer, MessageHandle since)
         {
             observers.Subscribe(observer);
-            return Task.CompletedTask;
+            if (since != default)
+            {
+                foreach (var (message, handle) in await rewoundMessagesGrain.GetMessagesSinceAsync(since))
+                {
+                    observer.ReceiveMessage(message, handle);
+                }
+            }
         }
 
         public Task UnsubscribeFromMessages(IClientMessageObserver observer)

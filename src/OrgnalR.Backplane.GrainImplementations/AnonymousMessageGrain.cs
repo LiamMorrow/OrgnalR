@@ -9,11 +9,19 @@ namespace OrgnalR.Backplane.GrainImplementations
 {
     public class AnonymousMessageGrain : Grain, IAnonymousMessageGrain
     {
+
         private readonly GrainObserverManager<IAnonymousMessageObserver> observers = new GrainObserverManager<IAnonymousMessageObserver>
         {
             ExpirationDuration = TimeSpan.FromMinutes(5),
             OnFailBeforeDefunct = x => x.SubscriptionEnded()
         };
+        private IRewindableMessageGrain<AnonymousMessage> rewoundMessagesGrain = null!;
+
+        public override Task OnActivateAsync()
+        {
+            rewoundMessagesGrain = GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(this.GetPrimaryKeyString());
+            return base.OnActivateAsync();
+        }
 
         public override Task OnDeactivateAsync()
         {
@@ -24,16 +32,22 @@ namespace OrgnalR.Backplane.GrainImplementations
             return base.OnDeactivateAsync();
         }
 
-        public Task AcceptMessageAsync(AnonymousMessage message, GrainCancellationToken cancellationToken)
+        public async Task AcceptMessageAsync(AnonymousMessage message, GrainCancellationToken cancellationToken)
         {
-            observers.Notify(x => x.ReceiveMessage(message));
-            return Task.CompletedTask;
+            var handle = await rewoundMessagesGrain.PushMessageAsync(message);
+            observers.Notify(x => x.ReceiveMessage(message, handle));
         }
 
-        public Task SubscribeToMessages(IAnonymousMessageObserver observer)
+        public async Task SubscribeToMessages(IAnonymousMessageObserver observer, MessageHandle since)
         {
             observers.Subscribe(observer);
-            return Task.CompletedTask;
+            if (since != default)
+            {
+                foreach (var (message, handle) in await rewoundMessagesGrain.GetMessagesSinceAsync(since))
+                {
+                    observer.ReceiveMessage(message, handle);
+                }
+            }
         }
 
         public Task UnsubscribeFromMessages(IAnonymousMessageObserver observer)
