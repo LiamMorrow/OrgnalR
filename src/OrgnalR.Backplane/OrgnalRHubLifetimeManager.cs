@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Protocol;
+using Microsoft.Extensions.Logging;
 using OrgnalR.Core;
 using OrgnalR.Core.Data;
 using OrgnalR.Core.Provider;
@@ -23,6 +24,7 @@ namespace OrgnalR.Backplane
         private readonly IUserActorProvider userActorProvider;
         private readonly IMessageObservable messageObservable;
         private readonly IMessageObserver messageObserver;
+        private readonly ILogger<OrgnalRHubLifetimeManager<THub>> logger;
         private SubscriptionHandle? allSubscriptionHandle;
 
         private MessageHandle latestClientMessageHandle;
@@ -32,13 +34,15 @@ namespace OrgnalR.Backplane
             IGroupActorProvider groupActorProvider,
             IUserActorProvider userActorProvider,
             IMessageObservable messageObservable,
-            IMessageObserver messageObserver
+            IMessageObserver messageObserver,
+            ILogger<OrgnalRHubLifetimeManager<THub>> logger
             )
         {
             this.groupActorProvider = groupActorProvider ?? throw new ArgumentNullException(nameof(groupActorProvider));
             this.userActorProvider = userActorProvider ?? throw new ArgumentNullException(nameof(userActorProvider));
             this.messageObservable = messageObservable ?? throw new ArgumentNullException(nameof(messageObservable));
             this.messageObserver = messageObserver ?? throw new ArgumentNullException(nameof(messageObserver));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         /// <summary>
         /// Create an instance of this class and subscribes to messages that are broadcasted to the "all" stream for the hub
@@ -54,10 +58,11 @@ namespace OrgnalR.Backplane
             IUserActorProvider userActorProvider,
             IMessageObservable messageObservable,
             IMessageObserver messageObserver,
+            ILogger<OrgnalRHubLifetimeManager<THub>> logger,
             CancellationToken cancellationToken = default
             )
         {
-            var manager = new OrgnalRHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver);
+            var manager = new OrgnalRHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver, logger);
             manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(manager.OnAnonymousMessageReceived, manager.OnAnonymousSubscriptionEnd, default, cancellationToken).ConfigureAwait(false);
             return manager;
         }
@@ -74,9 +79,9 @@ namespace OrgnalR.Backplane
             {
                 await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, latestClientMessageHandle);
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException e)
             {
-                // TODO logging
+                logger.LogWarning(e, "Unable to replay client messages since last connect for client {0}", connection.ConnectionId);
                 await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, default);
             }
         }
@@ -204,10 +209,10 @@ namespace OrgnalR.Backplane
             {
                 allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, latestAllMessageHandle, default);
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException e)
             {
+                logger.LogWarning(e, "Unable to replay anonymous messages since last connect");
                 allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, default, default);
-                // TODO logging
             }
         }
 

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OrgnalR.Backplane;
 using OrgnalR.Backplane.GrainAdaptors;
 using OrgnalR.Backplane.GrainInterfaces;
@@ -161,7 +162,8 @@ namespace OrgnalR.SignalR
                     services.GetService<IGroupActorProvider<T>>(),
                     services.GetService<IUserActorProvider<T>>(),
                     services.GetService<IMessageObservable<T>>(),
-                    services.GetService<IMessageObserver<T>>()
+                    services.GetService<IMessageObserver<T>>(),
+                    services.GetRequiredService<ILogger<OrgnalRHubLifetimeManager<T>>>()
                 ).Result;
             }
             public override Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
