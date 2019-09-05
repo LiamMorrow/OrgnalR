@@ -57,10 +57,7 @@ namespace OrgnalR.Silo
         {
             builder.ConfigureServices((_, services) =>
             {
-                var conf = new OrgnalRSiloConfig
-                {
-                    MaxMessageRewind = 10
-                };
+                var conf = new OrgnalRSiloConfig();
                 configure?.Invoke(conf);
                 services.Add(new ServiceDescriptor(typeof(OrgnalRSiloConfig), conf));
             });
