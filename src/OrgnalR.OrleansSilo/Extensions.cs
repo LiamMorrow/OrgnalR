@@ -9,10 +9,11 @@ namespace OrgnalR.Silo
     {
         public const string GROUP_STORAGE_PROVIDER = Constants.GROUP_STORAGE_PROVIDER;
         public const string USER_STORAGE_PROVIDER = Constants.USER_STORAGE_PROVIDER;
+        public const string MESSAGE_STORAGE_PROVIDER = Constants.MESSAGE_STORAGE_PROVIDER;
         /// <summary>
         /// Adds the OrgnalR grains to the builder, and also automatically registers memory grain storage for group and user lists.
         /// This is useful for local development, however it is recommended that you add a persistent storage for:
-        /// <see cref="Constants.GROUP_STORAGE_PROVIDER"/>, and <see cref="Constants.USER_STORAGE_PROVIDER"/>
+        /// <see cref="GROUP_STORAGE_PROVIDER"/>, and <see cref="USER_STORAGE_PROVIDER"/>, and <see cref="MESSAGE_STORAGE_PROVIDER"/>
         /// Then you may use <see cref="AddOrgnalR<T>(T builder)"/> to add orgnalr using the storage providers of your choice
         /// </summary>
         /// <param name="builder">The builder to configure</param>
@@ -29,6 +30,11 @@ namespace OrgnalR.Silo
                 builder.AddMemoryGrainStorage(Constants.USER_STORAGE_PROVIDER);
             }
             catch { /* Do nothing, already added  */}
+            try
+            {
+                builder.AddMemoryGrainStorage(Constants.MESSAGE_STORAGE_PROVIDER);
+            }
+            catch { /* Do nothing, already added  */}
 
             return builder.AddOrgnalR();
         }
@@ -36,7 +42,7 @@ namespace OrgnalR.Silo
         /// <summary>
         /// Adds the OrgnalR grains to the builder. This method is recommended for production use.
         /// You must configure storage providers for:
-        /// <see cref="Constants.GROUP_STORAGE_PROVIDER"/>, and <see cref="Constants.USER_STORAGE_PROVIDER"/>
+        /// <see cref="GROUP_STORAGE_PROVIDER"/>, and <see cref="USER_STORAGE_PROVIDER"/>, and <see cref="MESSAGE_STORAGE_PROVIDER"/>
         /// Alternatively, for local development, use: <see cref="AddOrgnalRWithMemoryGrainStorage<T>(T builder)"/>
         /// </summary>
         /// <param name="builder">The builder to configure</param>
