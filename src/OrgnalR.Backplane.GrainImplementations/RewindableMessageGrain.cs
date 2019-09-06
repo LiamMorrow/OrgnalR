@@ -18,6 +18,7 @@ namespace OrgnalR.Backplane.GrainImplementations
         private long OldestMessageId => Math.Max(0, LatestMessageId - maxMessages);
         private long LatestMessageId => State.LatestMessageId;
         private Dictionary<long, RewindableMessageWrapper<T>> Messages => State.Messages;
+        private bool dirty = false;
 
 
         public override Task OnActivateAsync()
@@ -31,9 +32,15 @@ namespace OrgnalR.Backplane.GrainImplementations
                     MessageGroup = Guid.NewGuid()
                 };
             }
+            RegisterTimer(WriteStateIfDirtyAsync, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
             return base.OnActivateAsync();
         }
 
+        public override async Task OnDeactivateAsync()
+        {
+            await WriteStateIfDirtyAsync(null);
+            await base.OnDeactivateAsync();
+        }
 
         public Task<List<(T message, MessageHandle handle)>> GetMessagesSinceAsync(MessageHandle handle)
         {
@@ -64,9 +71,18 @@ namespace OrgnalR.Backplane.GrainImplementations
                 SentAt = DateTimeOffset.UtcNow
             };
             Messages.Remove(LatestMessageId - maxMessages);
+            dirty = true;
             return Task.FromResult(new MessageHandle(LatestMessageId, State.MessageGroup));
         }
 
+        private Task WriteStateIfDirtyAsync(object? _)
+        {
+            if (!dirty)
+            {
+                return Task.CompletedTask;
+            }
+            return WriteStateAsync();
+        }
     }
     public class RewindableMessageGrainState<T>
     {
