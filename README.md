@@ -84,6 +84,7 @@ var builder = new SiloHostBuilder()
                 {
                     services.AddSingletonNamedService<IGrainStorage, YourStorageProvider>(Extensions.USER_STORAGE_PROVIDER);
                     services.AddSingletonNamedService<IGrainStorage, YourStorageProvider>(Extensions.GROUP_STORAGE_PROVIDER);
+                    services.AddSingletonNamedService<IGrainStorage, YourStorageProvider>(Extensions.MESSAGE_STORAGE_PROVIDER);
                 })
                 .AddOrgnalR()
 ```
