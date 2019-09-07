@@ -23,7 +23,7 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         public override Task OnActivateAsync()
         {
-            var config = (OrgnalRSiloConfig?)ServiceProvider.GetService(typeof(OrgnalRSiloConfig));
+            var config = (OrgnalRSiloConfig?)ServiceProvider?.GetService(typeof(OrgnalRSiloConfig));
             maxMessages = config?.MaxMessageRewind ?? 0;
             if (State == null)
             {
@@ -51,7 +51,7 @@ namespace OrgnalR.Backplane.GrainImplementations
                 // This could happen if we use the in memory grain storage.  And if we are, then we do not need to be reliable
                 return Task.FromResult(new List<(T, MessageHandle)>());
             }
-            if (OldestMessageId > messageIdExclusive - 1)
+            if (OldestMessageId > messageIdExclusive)
             {
                 throw new ArgumentOutOfRangeException($"Oldest message is: {OldestMessageId}");
             }
