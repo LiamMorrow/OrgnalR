@@ -16,6 +16,7 @@ namespace OrgnalR.Silo
         /// This is a best effort resubscribe, and can be configured via <see cref="OrgnalRSiloConfig"/>
         /// </summary>
         public const string MESSAGE_STORAGE_PROVIDER = Constants.MESSAGE_STORAGE_PROVIDER;
+
         /// <summary>
         /// Adds the OrgnalR grains to the builder, and also automatically registers memory grain storage for group and user lists.
         /// This is useful for local development, however it is recommended that you add a persistent storage for:
