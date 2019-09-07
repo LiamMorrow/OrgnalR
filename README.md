@@ -60,7 +60,7 @@ That's it on the SignalR side. There is no difference between a production and a
 
 Wherever you configure your orleans Silo, you will need to configure OrgnalR's grains. This is again accomplished by an extension method, however there are two different modes. For development, it is easiest to use the `AddOrgnalRWithMemoryGrainStorage` extension method, which registers the storage providers for the grains with memory storage. This is undesirable for production as if the silo dies, the information on connections in which groups is lost.
 
-For production usage it is best to configure actual persistent storage for `ORGNALR_USER_STORAGE` and `ORGNALR_GROUP_STORAGE`, then use the `AddOrgnalR` extension method.
+For production usage it is best to configure actual persistent storage for `ORGNALR_USER_STORAGE`, `ORGNALR_GROUP_STORAGE`, and `MESSAGE_STORAGE_PROVIDER`, then use the `AddOrgnalR` extension method.
 
 Both of these methods are found in the `OrgnalR.Silo` namespace.
 
