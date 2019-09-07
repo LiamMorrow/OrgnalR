@@ -8,6 +8,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="coverlet.msbuild" Version="2.6.3">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
         <PackageReference Include="OrleansTestKit" Version="2.3.6" />
         <PackageReference Include="xunit" Version="2.4.1" />

@@ -3,21 +3,20 @@ name: test
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - master
+      - master
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.2.204
-    - name: Run tests
-      run: dotnet test ./test/OrgnalR.Tests
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 2.2.204
+      - name: Run tests
+        run: dotnet test ./test/OrgnalR.Tests /p:CollectCoverage=true
