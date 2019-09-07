@@ -63,5 +63,18 @@ namespace OrgnalR.Tests.Grains
             handle = new MessageHandle(handle.MessageId, Guid.NewGuid());
             Assert.Empty(await grain.GetMessagesSinceAsync(handle));
         }
+
+        [Fact]
+        public async Task GetMessageSinceReturnsEmptyWhenHandleNewer()
+        {
+            Silo.ServiceProvider.AddService(new OrgnalRSiloConfig
+            {
+                MaxMessageRewind = 1
+            });
+            var grain = await Silo.CreateGrainAsync<RewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
+            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget1", new object[0])));
+            handle = new MessageHandle(handle.MessageId + 1, handle.MessageGroup);
+            Assert.Empty(await grain.GetMessagesSinceAsync(handle));
+        }
     }
 }
