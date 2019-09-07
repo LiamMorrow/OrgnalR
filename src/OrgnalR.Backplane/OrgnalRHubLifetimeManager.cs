@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Protocol;
+using Microsoft.Extensions.Logging;
 using OrgnalR.Core;
 using OrgnalR.Core.Data;
 using OrgnalR.Core.Provider;
@@ -23,19 +24,25 @@ namespace OrgnalR.Backplane
         private readonly IUserActorProvider userActorProvider;
         private readonly IMessageObservable messageObservable;
         private readonly IMessageObserver messageObserver;
+        private readonly ILogger<OrgnalRHubLifetimeManager<THub>> logger;
         private SubscriptionHandle? allSubscriptionHandle;
+
+        private MessageHandle latestClientMessageHandle;
+        private MessageHandle latestAllMessageHandle;
 
         private OrgnalRHubLifetimeManager(
             IGroupActorProvider groupActorProvider,
             IUserActorProvider userActorProvider,
             IMessageObservable messageObservable,
-            IMessageObserver messageObserver
+            IMessageObserver messageObserver,
+            ILogger<OrgnalRHubLifetimeManager<THub>> logger
             )
         {
             this.groupActorProvider = groupActorProvider ?? throw new ArgumentNullException(nameof(groupActorProvider));
             this.userActorProvider = userActorProvider ?? throw new ArgumentNullException(nameof(userActorProvider));
             this.messageObservable = messageObservable ?? throw new ArgumentNullException(nameof(messageObservable));
             this.messageObserver = messageObserver ?? throw new ArgumentNullException(nameof(messageObserver));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         /// <summary>
         /// Create an instance of this class and subscribes to messages that are broadcasted to the "all" stream for the hub
@@ -45,17 +52,18 @@ namespace OrgnalR.Backplane
         /// <param name="messageObservable"></param>
         /// <param name="messageObserver"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A new instance off <see cref="OrgnalRHubLifetimeManager<THub>" /> that is </returns>
+        /// <returns>A new instance of <see cref="OrgnalRHubLifetimeManager<THub>" /> that is subscribed to the anonymous message broadcasts</returns>
         public static async Task<OrgnalRHubLifetimeManager<THub>> CreateAsync(
             IGroupActorProvider groupActorProvider,
             IUserActorProvider userActorProvider,
             IMessageObservable messageObservable,
             IMessageObserver messageObserver,
+            ILogger<OrgnalRHubLifetimeManager<THub>> logger,
             CancellationToken cancellationToken = default
             )
         {
-            var manager = new OrgnalRHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver);
-            manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(manager.OnAnonymousMessageReceived, manager.OnAnonymousSubscriptionEnd, cancellationToken).ConfigureAwait(false);
+            var manager = new OrgnalRHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver, logger);
+            manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(manager.OnAnonymousMessageReceived, manager.OnAnonymousSubscriptionEnd, default, cancellationToken).ConfigureAwait(false);
             return manager;
         }
 
@@ -67,7 +75,15 @@ namespace OrgnalR.Backplane
                 await userActorProvider.GetUserActor(connection.UserIdentifier)
                     .AddToUserAsync(connection.ConnectionId);
             }
-            await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd);
+            try
+            {
+                await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, latestClientMessageHandle);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                logger.LogWarning(e, "Unable to replay client messages since last connect for client {0}", connection.ConnectionId);
+                await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, default);
+            }
         }
 
 
@@ -118,7 +134,7 @@ namespace OrgnalR.Backplane
                 var msg = new AddressedMessage(connectionId, new InvocationMessage(methodName, args));
                 if (local != null)
                 {
-                    toAwait.Add(OnAddressedMessageReceived(msg));
+                    toAwait.Add(OnAddressedMessageReceived(msg, default));
                 }
                 else
                 {
@@ -160,14 +176,21 @@ namespace OrgnalR.Backplane
             );
         }
 
-        private Task OnAddressedMessageReceived(AddressedMessage arg)
+        private async Task OnAddressedMessageReceived(AddressedMessage arg, MessageHandle handle)
         {
             var conn = hubConnectionStore[arg.ConnectionId];
             if (conn == null)
-                return Task.CompletedTask;
+                return;
             if (conn.ConnectionAborted.IsCancellationRequested)
-                return Task.CompletedTask;
-            return conn.WriteAsync(arg.Payload).AsTask();
+                return;
+            await conn.WriteAsync(arg.Payload);
+            if (handle != default
+                // We only want to store the latest message, unless the group has changed, in which case we cannot rely on always increasing ids
+                && (handle.MessageId > latestClientMessageHandle.MessageId
+                    || handle.MessageGroup != latestClientMessageHandle.MessageGroup))
+            {
+                latestClientMessageHandle = handle;
+            }
         }
 
         private Task OnClientSubscriptionEnd(string connectionId)
@@ -182,10 +205,18 @@ namespace OrgnalR.Backplane
 
         private async Task OnAnonymousSubscriptionEnd(SubscriptionHandle _)
         {
-            allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, default);
+            try
+            {
+                allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, latestAllMessageHandle, default);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                logger.LogWarning(e, "Unable to replay anonymous messages since last connect");
+                allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(OnAnonymousMessageReceived, OnAnonymousSubscriptionEnd, default, default);
+            }
         }
 
-        private Task OnAnonymousMessageReceived(AnonymousMessage msg)
+        private async Task OnAnonymousMessageReceived(AnonymousMessage msg, MessageHandle handle)
         {
             var toAwait = new List<ValueTask>();
             foreach (var conn in hubConnectionStore)
@@ -196,7 +227,14 @@ namespace OrgnalR.Backplane
                     continue;
                 toAwait.Add(conn.WriteAsync(msg.Payload));
             }
-            return Task.WhenAll(toAwait.Where(vt => !vt.IsCompleted).Select(vt => vt.AsTask()));
+            await Task.WhenAll(toAwait.Where(vt => !vt.IsCompleted).Select(vt => vt.AsTask()));
+            if (handle != default
+                // We only want to store the latest message, unless the group has changed, in which case we cannot rely on always increasing ids
+                && (handle.MessageId > latestAllMessageHandle.MessageId
+                    || handle.MessageGroup != latestAllMessageHandle.MessageGroup))
+            {
+                latestAllMessageHandle = handle;
+            }
         }
 
         public async ValueTask DisposeAsync()

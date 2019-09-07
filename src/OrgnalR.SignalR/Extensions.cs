@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OrgnalR.Backplane;
 using OrgnalR.Backplane.GrainAdaptors;
 using OrgnalR.Backplane.GrainInterfaces;
@@ -102,14 +103,24 @@ namespace OrgnalR.SignalR
                 @delegate = new GrainMessageObservable(typeof(T).Name, grainFactory.GetGrainFactory());
             }
 
-            public Task<SubscriptionHandle> SubscribeToAllAsync(Func<AnonymousMessage, Task> messageCallback, Func<SubscriptionHandle, Task> onSubscriptionEnd, CancellationToken cancellationToken = default)
+            public Task<SubscriptionHandle> SubscribeToAllAsync(
+                Func<AnonymousMessage, MessageHandle, Task> messageCallback,
+                Func<SubscriptionHandle, Task> onSubscriptionEnd,
+                MessageHandle since = default,
+                CancellationToken cancellationToken = default
+            )
             {
-                return @delegate.SubscribeToAllAsync(messageCallback, onSubscriptionEnd, cancellationToken);
+                return @delegate.SubscribeToAllAsync(messageCallback, onSubscriptionEnd, since, cancellationToken);
             }
 
-            public Task SubscribeToConnectionAsync(string connectionId, Func<AddressedMessage, Task> messageCallback, Func<string, Task> onSubscriptionEnd, CancellationToken cancellationToken = default)
+            public Task SubscribeToConnectionAsync(string connectionId,
+            Func<AddressedMessage, MessageHandle, Task> messageCallback,
+            Func<string, Task> onSubscriptionEnd,
+            MessageHandle since = default,
+            CancellationToken cancellationToken = default
+            )
             {
-                return @delegate.SubscribeToConnectionAsync(connectionId, messageCallback, onSubscriptionEnd, cancellationToken);
+                return @delegate.SubscribeToConnectionAsync(connectionId, messageCallback, onSubscriptionEnd, since, cancellationToken);
             }
 
             public Task UnsubscribeFromAllAsync(SubscriptionHandle subscriptionHandle, CancellationToken cancellationToken = default)
@@ -151,7 +162,8 @@ namespace OrgnalR.SignalR
                     services.GetService<IGroupActorProvider<T>>(),
                     services.GetService<IUserActorProvider<T>>(),
                     services.GetService<IMessageObservable<T>>(),
-                    services.GetService<IMessageObserver<T>>()
+                    services.GetService<IMessageObserver<T>>(),
+                    services.GetRequiredService<ILogger<OrgnalRHubLifetimeManager<T>>>()
                 ).Result;
             }
             public override Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)

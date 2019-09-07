@@ -8,7 +8,7 @@ namespace OrgnalR.Backplane.GrainImplementations
 {
     /// <summary>
     /// Maintains a collection of grain observers.
-    /// taken from: https://github.com/dotnet/orleans/blob/master/Samples/2.0/ServiceFabric/Grains/GrainObserverManager.cs  
+    /// taken from: https://github.com/dotnet/orleans/blob/master/Samples/2.0/ServiceFabric/Grains/GrainObserverManager.cs
     /// </summary>
     /// <typeparam name="T">
     /// The grain observer type.

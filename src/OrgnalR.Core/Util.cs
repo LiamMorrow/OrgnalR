@@ -33,6 +33,14 @@ namespace OrgnalR.Core
             return new HashSet<T>(items);
         }
 
+        public static IEnumerable<long> LongRange(long start, long count)
+        {
+            for (long i = start; i < start + count; i++)
+            {
+                yield return i;
+            }
+        }
+
 
         public static Task WithCancellation(this Task source, CancellationToken cancellationToken)
         {
