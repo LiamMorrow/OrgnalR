@@ -18,6 +18,7 @@ namespace OrgnalR.Backplane
     /// <typeparam name="THub">The hub type this is applicable to</typeparam>
     public class OrgnalRHubLifetimeManager<THub> : HubLifetimeManager<THub>, IDisposable where THub : Hub
     {
+        private const string CONNECTION_LATEST_MESSAGE_KEY = "ORGNALR_LatestClientMessageHandle";
         private bool disposed;
         private readonly HubConnectionStore hubConnectionStore = new HubConnectionStore();
         private readonly IGroupActorProvider groupActorProvider;
@@ -27,7 +28,6 @@ namespace OrgnalR.Backplane
         private readonly ILogger<OrgnalRHubLifetimeManager<THub>> logger;
         private SubscriptionHandle? allSubscriptionHandle;
 
-        private MessageHandle latestClientMessageHandle;
         private MessageHandle latestAllMessageHandle;
 
         private OrgnalRHubLifetimeManager(
@@ -70,6 +70,7 @@ namespace OrgnalR.Backplane
         public override async Task OnConnectedAsync(HubConnectionContext connection)
         {
             hubConnectionStore.Add(connection);
+
             if (connection.UserIdentifier != null)
             {
                 await userActorProvider.GetUserActor(connection.UserIdentifier)
@@ -77,7 +78,7 @@ namespace OrgnalR.Backplane
             }
             try
             {
-                await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, latestClientMessageHandle);
+                await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, GetClientMessageHandle(connection));
             }
             catch (ArgumentOutOfRangeException e)
             {
@@ -176,20 +177,42 @@ namespace OrgnalR.Backplane
             );
         }
 
+        public async ValueTask DisposeAsync()
+        {
+            if (disposed)
+                return;
+            if (allSubscriptionHandle != null)
+            {
+                await messageObservable.UnsubscribeFromAllAsync(allSubscriptionHandle);
+                allSubscriptionHandle = null;
+            }
+            disposed = true;
+        }
+
+        [Obsolete("Use DisposeAsync instead")]
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+            DisposeAsync().AsTask().Wait();
+        }
+
         private async Task OnAddressedMessageReceived(AddressedMessage arg, MessageHandle handle)
         {
-            var conn = hubConnectionStore[arg.ConnectionId];
-            if (conn == null)
+            var connection = hubConnectionStore[arg.ConnectionId];
+            if (connection == null)
                 return;
-            if (conn.ConnectionAborted.IsCancellationRequested)
+            if (connection.ConnectionAborted.IsCancellationRequested)
                 return;
-            await conn.WriteAsync(arg.Payload);
+            await connection.WriteAsync(arg.Payload);
+
+            var latestClientMessageHandle = GetClientMessageHandle(connection);
             if (handle != default
                 // We only want to store the latest message, unless the group has changed, in which case we cannot rely on always increasing ids
                 && (handle.MessageId > latestClientMessageHandle.MessageId
                     || handle.MessageGroup != latestClientMessageHandle.MessageGroup))
             {
-                latestClientMessageHandle = handle;
+                connection.Items[CONNECTION_LATEST_MESSAGE_KEY] = handle;
             }
         }
 
@@ -237,24 +260,14 @@ namespace OrgnalR.Backplane
             }
         }
 
-        public async ValueTask DisposeAsync()
+        private MessageHandle GetClientMessageHandle(HubConnectionContext connection)
         {
-            if (disposed)
-                return;
-            if (allSubscriptionHandle != null)
+            if (connection.Items.TryGetValue(CONNECTION_LATEST_MESSAGE_KEY, out var latestClientMessageHandle))
             {
-                await messageObservable.UnsubscribeFromAllAsync(allSubscriptionHandle);
-                allSubscriptionHandle = null;
+                return (MessageHandle)latestClientMessageHandle;
             }
-            disposed = true;
-        }
 
-        [Obsolete("Use DisposeAsync instead")]
-        public void Dispose()
-        {
-            if (disposed)
-                return;
-            DisposeAsync().AsTask().Wait();
+            return default;
         }
     }
 }
