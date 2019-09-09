@@ -7,6 +7,7 @@ using Orleans;
 using OrgnalR.Core;
 using Orleans.Providers;
 using OrgnalR.Core.Provider;
+using OrgnalR.Core.Data;
 
 namespace OrgnalR.Backplane.GrainImplementations
 {
@@ -15,9 +16,9 @@ namespace OrgnalR.Backplane.GrainImplementations
     {
 
         private long maxMessages;
-        private long OldestMessageId => Math.Max(0, LatestMessageId - maxMessages);
+        private CircularBuffer<RewindableMessageWrapper<T>> messageBuffer = null!;
+        private long OldestMessageId => messageBuffer.Front().MessageId;
         private long LatestMessageId => State.LatestMessageId;
-        private Dictionary<long, RewindableMessageWrapper<T>> Messages => State.Messages;
         private bool dirty = false;
 
 
@@ -29,9 +30,11 @@ namespace OrgnalR.Backplane.GrainImplementations
             {
                 State = new RewindableMessageGrainState<T>
                 {
-                    MessageGroup = Guid.NewGuid()
+                    MessageGroup = Guid.NewGuid(),
+                    Messages = new RewindableMessageWrapper<T>[maxMessages]
                 };
             }
+            messageBuffer = new CircularBuffer<RewindableMessageWrapper<T>>(maxMessages, State.Messages);
             RegisterTimer(WriteStateIfDirtyAsync, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
             return base.OnActivateAsync();
         }
@@ -81,6 +84,7 @@ namespace OrgnalR.Backplane.GrainImplementations
             {
                 return Task.CompletedTask;
             }
+            State.Messages = messageBuffer.ToArray();
             return WriteStateAsync();
         }
     }
@@ -88,11 +92,12 @@ namespace OrgnalR.Backplane.GrainImplementations
     {
         public Guid MessageGroup { get; set; }
         public long LatestMessageId { get; set; }
-        public Dictionary<long, RewindableMessageWrapper<T>> Messages { get; set; } = new Dictionary<long, RewindableMessageWrapper<T>>();
+        public RewindableMessageWrapper<T>[] Messages { get; set; } = null!;
     }
 
     public class RewindableMessageWrapper<T>
     {
+        public long MessageId { get; set; }
         public DateTimeOffset SentAt { get; set; }
         public T Message { get; set; } = default!;
     }
