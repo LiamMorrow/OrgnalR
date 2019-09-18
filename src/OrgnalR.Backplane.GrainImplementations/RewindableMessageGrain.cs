@@ -31,7 +31,7 @@ namespace OrgnalR.Backplane.GrainImplementations
                 State = new RewindableMessageGrainState<T>
                 {
                     MessageGroup = Guid.NewGuid(),
-                    Messages = new RewindableMessageWrapper<T>[maxMessages]
+                    Messages = new RewindableMessageWrapper<T>[0]
                 };
             }
             messageBuffer = new CircularBuffer<RewindableMessageWrapper<T>>(maxMessages, State.Messages);

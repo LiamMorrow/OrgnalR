@@ -35,6 +35,39 @@ namespace OrgnalR.Tests.Grains
         }
 
         [Fact]
+        public async Task GetMessageSinceReturnsAllMessagesIfInBoundsLargerSet()
+        {
+            var maxRewind = 10;
+            Silo.ServiceProvider.AddService(new OrgnalRSiloConfig
+            {
+                MaxMessageRewind = maxRewind
+            });
+            var grain = await Silo.CreateGrainAsync<RewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
+            var handles = Enumerable.Range(0, 20)
+                .Select(i => grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage(i.ToString(), new object[0]))))
+                .Select(x => x.Result)
+                .ToList();
+
+            for (int i = 0; i < handles.Count; i++)
+            {
+                if (i + 1 < maxRewind)
+                {
+                    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await grain.GetMessagesSinceAsync(handles[i]));
+                }
+                else
+                {
+                    var since = await grain.GetMessagesSinceAsync(handles[i]);
+                    var expectedSinceHandles = handles.SkipWhile(x => x.MessageId <= handles[i].MessageId).ToList();
+                    Assert.Equal(expectedSinceHandles, since.Select(x => x.handle).ToList());
+                    if (i != handles.Count - 1)
+                    {
+                        Assert.NotEmpty(since);
+                    }
+                }
+            }
+        }
+
+        [Fact]
         public async Task GetMessageSinceThrowsWhenOutOfBounds()
         {
             Silo.ServiceProvider.AddService(new OrgnalRSiloConfig
