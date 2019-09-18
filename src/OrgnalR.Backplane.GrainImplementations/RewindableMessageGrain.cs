@@ -7,6 +7,7 @@ using Orleans;
 using OrgnalR.Core;
 using Orleans.Providers;
 using OrgnalR.Core.Provider;
+using OrgnalR.Core.Data;
 
 namespace OrgnalR.Backplane.GrainImplementations
 {
@@ -14,10 +15,10 @@ namespace OrgnalR.Backplane.GrainImplementations
     public class RewindableMessageGrain<T> : Grain<RewindableMessageGrainState<T>>, IRewindableMessageGrain<T>
     {
 
-        private long maxMessages;
-        private long OldestMessageId => Math.Max(0, LatestMessageId - maxMessages);
+        private int maxMessages;
+        private CircularBuffer<RewindableMessageWrapper<T>> messageBuffer = null!;
+        private long OldestMessageId => messageBuffer.Front().MessageId;
         private long LatestMessageId => State.LatestMessageId;
-        private Dictionary<long, RewindableMessageWrapper<T>> Messages => State.Messages;
         private bool dirty = false;
 
 
@@ -25,13 +26,15 @@ namespace OrgnalR.Backplane.GrainImplementations
         {
             var config = (OrgnalRSiloConfig?)ServiceProvider?.GetService(typeof(OrgnalRSiloConfig));
             maxMessages = config?.MaxMessageRewind ?? 0;
-            if (State == null)
+            if (State == null || State.Messages == null)
             {
                 State = new RewindableMessageGrainState<T>
                 {
-                    MessageGroup = Guid.NewGuid()
+                    MessageGroup = Guid.NewGuid(),
+                    Messages = new RewindableMessageWrapper<T>[0]
                 };
             }
+            messageBuffer = new CircularBuffer<RewindableMessageWrapper<T>>(maxMessages, State.Messages);
             RegisterTimer(WriteStateIfDirtyAsync, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
             return base.OnActivateAsync();
         }
@@ -51,26 +54,30 @@ namespace OrgnalR.Backplane.GrainImplementations
                 // This could happen if we use the in memory grain storage.  And if we are, then we do not need to be reliable
                 return Task.FromResult(new List<(T, MessageHandle)>());
             }
-            if (OldestMessageId > messageIdExclusive)
+            // If the oldest message is for example 2, and we want all messages since 1, we can still service that, so we add 1
+            if (OldestMessageId > messageIdExclusive + 1)
             {
                 throw new ArgumentOutOfRangeException($"Oldest message is: {OldestMessageId}");
             }
+            var messages = messageBuffer.SkipWhile(x => x.MessageId <= messageIdExclusive).ToList();
             return Task.FromResult(
-                Util.LongRange(messageIdExclusive + 1, LatestMessageId - messageIdExclusive)
-                .Select(id => (Messages[id].Message, new MessageHandle(id, State.MessageGroup)))
-                .ToList()
+                messages
+                    .Select(msg => (msg.Message, new MessageHandle(msg.MessageId, State.MessageGroup)))
+                    .ToList()
             );
         }
 
         public Task<MessageHandle> PushMessageAsync(T message)
         {
             State.LatestMessageId++;
-            Messages[LatestMessageId] = new RewindableMessageWrapper<T>
-            {
-                Message = message,
-                SentAt = DateTimeOffset.UtcNow
-            };
-            Messages.Remove(LatestMessageId - maxMessages);
+            messageBuffer.PushBack(
+                new RewindableMessageWrapper<T>
+                {
+                    Message = message,
+                    SentAt = DateTimeOffset.UtcNow,
+                    MessageId = State.LatestMessageId
+                }
+            );
             dirty = true;
             return Task.FromResult(new MessageHandle(LatestMessageId, State.MessageGroup));
         }
@@ -81,6 +88,7 @@ namespace OrgnalR.Backplane.GrainImplementations
             {
                 return Task.CompletedTask;
             }
+            State.Messages = messageBuffer.ToArray();
             return WriteStateAsync();
         }
     }
@@ -88,11 +96,12 @@ namespace OrgnalR.Backplane.GrainImplementations
     {
         public Guid MessageGroup { get; set; }
         public long LatestMessageId { get; set; }
-        public Dictionary<long, RewindableMessageWrapper<T>> Messages { get; set; } = new Dictionary<long, RewindableMessageWrapper<T>>();
+        public RewindableMessageWrapper<T>[] Messages { get; set; } = null!;
     }
 
     public class RewindableMessageWrapper<T>
     {
+        public long MessageId { get; set; }
         public DateTimeOffset SentAt { get; set; }
         public T Message { get; set; } = default!;
     }
