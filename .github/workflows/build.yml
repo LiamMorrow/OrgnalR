@@ -3,23 +3,22 @@ name: build
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - master
+      - master
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.2.204
-    - name: Build SignalR Lib
-      run: dotnet build --configuration Release ./src/OrgnalR.SignalR
-    - name: Build Orleans Lib
-      run: dotnet build --configuration Release ./src/OrgnalR.OrleansSilo
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.100
+      - name: Build SignalR Lib
+        run: dotnet build --configuration Release ./src/OrgnalR.SignalR
+      - name: Build Orleans Lib
+        run: dotnet build --configuration Release ./src/OrgnalR.OrleansSilo
