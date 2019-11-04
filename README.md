@@ -16,13 +16,13 @@ OrgnalR comes in two packages, one for the Orleans Silo, and one for the SignalR
 
 #### SignalR
 
-![https://www.nuget.org/packages/OrgnalR.Signalr](https://img.shields.io/nuget/v/OrgnalR.SignalR?logo=SignalR)
+<a href="https://www.nuget.org/packages/OrgnalR.Signalr">![OrgnalR SignalR](https://img.shields.io/nuget/v/OrgnalR.SignalR?logo=SignalR)</a>
 ```
 dotnet add package OrgnalR.SignalR
 ```
 
 #### Orleans Silo
-![https://www.nuget.org/packages/OrgnalR.OrleansSilo](https://img.shields.io/nuget/v/OrgnalR.OrleansSilo?logo=OrleansSilo)
+<a href="https://www.nuget.org/packages/OrgnalR.OrleansSilo">![OrgnalR OrleansSilo](https://img.shields.io/nuget/v/OrgnalR.OrleansSilo?logo=OrleansSilo)</a>
 ```
 dotnet add package OrgnalR.OrleansSilo
 ```
