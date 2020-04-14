@@ -1,0 +1,38 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.201
+      - name: Pack Backplane
+        run: dotnet pack --configuration Release ./src/OrgnalR.Backplane
+      - name: Pack GrainAdaptors
+        run: dotnet pack --configuration Release ./src/OrgnalR.GrainAdaptors
+      - name: Pack GainImplementations
+        run: dotnet pack --configuration Release ./src/OrgnalR.GrainImplementations
+      - name: Pack GrainInterfaces
+        run: dotnet pack --configuration Release ./src/OrgnalR.GrainInterfaces
+      - name: Pack Core
+        run: dotnet pack --configuration Release ./src/OrgnalR.Core
+      - name: Pack OrleansSilo
+        run: dotnet pack --configuration Release ./src/OrgnalR.OrleansSilo
+      - name: Pack SignalR
+        run: dotnet pack --configuration Release ./src/OrgnalR.SignalR
+      - name: Push All
+        run: find . \( -name "*.nupkg" \) dotnet nuget push -s nuget.org -k $PUSH_KEY
+        env:
+          PUSH_KEY: ${{ secrets. NUGET_PUSH_KEY }}
