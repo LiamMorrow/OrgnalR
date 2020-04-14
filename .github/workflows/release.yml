@@ -33,6 +33,6 @@ jobs:
       - name: Pack SignalR
         run: dotnet pack --configuration Release ./src/OrgnalR.SignalR
       - name: Push All
-        run: find . \( -name "*.nupkg" \) dotnet nuget push -s nuget.org -k $PUSH_KEY
+        run: find . \( -name "*.nupkg" \) | dotnet nuget push -s nuget.org -k $PUSH_KEY
         env:
           PUSH_KEY: ${{ secrets. NUGET_PUSH_KEY }}
