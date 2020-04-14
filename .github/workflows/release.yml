@@ -21,11 +21,11 @@ jobs:
       - name: Pack Backplane
         run: dotnet pack --configuration Release ./src/OrgnalR.Backplane
       - name: Pack GrainAdaptors
-        run: dotnet pack --configuration Release ./src/OrgnalR.GrainAdaptors
+        run: dotnet pack --configuration Release ./src/OrgnalR.Backplane.GrainAdaptors
       - name: Pack GainImplementations
-        run: dotnet pack --configuration Release ./src/OrgnalR.GrainImplementations
+        run: dotnet pack --configuration Release ./src/OrgnalR.Backplane.GrainImplementations
       - name: Pack GrainInterfaces
-        run: dotnet pack --configuration Release ./src/OrgnalR.GrainInterfaces
+        run: dotnet pack --configuration Release ./src/OrgnalR.Backplane.GrainInterfaces
       - name: Pack Core
         run: dotnet pack --configuration Release ./src/OrgnalR.Core
       - name: Pack OrleansSilo
