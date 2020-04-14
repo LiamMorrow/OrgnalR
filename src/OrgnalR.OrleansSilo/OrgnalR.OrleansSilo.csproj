@@ -8,7 +8,7 @@
     </PropertyGroup>
     <PropertyGroup>
         <PackageId>OrgnalR.OrleansSilo</PackageId>
-        <Version>1.1.1</Version>
+        <Version>1.2.0</Version>
         <Authors>Liam Morrow</Authors>
         <Title>
         OrgnalR Orleans Silo
@@ -27,7 +27,7 @@
         <ProjectReference Include="..\OrgnalR.Backplane.GrainImplementations\OrgnalR.Backplane.GrainImplementations.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.0.0" />
+        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.1.5" />
+        <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.1.5" />
     </ItemGroup>
 </Project>
