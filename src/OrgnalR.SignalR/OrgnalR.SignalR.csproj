@@ -8,7 +8,7 @@
     </PropertyGroup>
     <PropertyGroup>
         <PackageId>OrgnalR.SignalR</PackageId>
-        <Version>1.2.0</Version>
+        <Version>1.2.1</Version>
         <Authors>Liam Morrow</Authors>
         <Title>
         OrgnalR SignalR
@@ -25,8 +25,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
-        <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.1.5" />
-        <PackageReference Include="Microsoft.Orleans.Core" Version="3.1.5" />
+        <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.1.6" />
+        <PackageReference Include="Microsoft.Orleans.Core" Version="3.1.6" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\OrgnalR.Backplane\OrgnalR.Backplane.csproj" />

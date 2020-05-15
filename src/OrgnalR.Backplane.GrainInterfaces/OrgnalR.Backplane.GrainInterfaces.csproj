@@ -8,7 +8,7 @@
     </PropertyGroup>
     <PropertyGroup>
         <PackageId>OrgnalR.GrainInterfaces</PackageId>
-        <Version>1.2.0</Version>
+        <Version>1.2.1</Version>
         <Authors>Liam Morrow</Authors>
         <Title>
         OrgnalR Grain Interfaces package
@@ -26,10 +26,10 @@
         <ProjectReference Include="..\OrgnalR.Core\OrgnalR.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.1.5">
+        <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.1.6">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.1.5" />
+        <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.1.6" />
     </ItemGroup>
 </Project>
