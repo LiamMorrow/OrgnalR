@@ -16,11 +16,11 @@ namespace OrgnalR.Backplane.GrainImplementations
             OnFailBeforeDefunct = x => x.SubscriptionEnded()
         };
 
-        private IRewindableMessageGrain<HubInvocationMessage> rewoundMessagesGrain = null!;
+        private IRewindableMessageGrain<MethodMessage> rewoundMessagesGrain = null!;
 
         public override Task OnActivateAsync()
         {
-            rewoundMessagesGrain = GrainFactory.GetGrain<IRewindableMessageGrain<HubInvocationMessage>>(this.GetPrimaryKeyString());
+            rewoundMessagesGrain = GrainFactory.GetGrain<IRewindableMessageGrain<MethodMessage>>(this.GetPrimaryKeyString());
             return base.OnActivateAsync();
         }
 
@@ -33,7 +33,7 @@ namespace OrgnalR.Backplane.GrainImplementations
             return base.OnDeactivateAsync();
         }
 
-        public async Task AcceptMessageAsync(HubInvocationMessage message, GrainCancellationToken cancellationToken)
+        public async Task AcceptMessageAsync(MethodMessage message, GrainCancellationToken cancellationToken)
         {
             var handle = await rewoundMessagesGrain.PushMessageAsync(message);
             observers.Notify(x => x.ReceiveMessage(message, handle));
