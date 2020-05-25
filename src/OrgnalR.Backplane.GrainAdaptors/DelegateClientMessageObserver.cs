@@ -20,7 +20,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
             this.onSubscriptionEnded = onSubscriptionEnded ?? throw new ArgumentNullException(nameof(onSubscriptionEnded));
         }
 
-        public void ReceiveMessage(HubInvocationMessage message, MessageHandle handle)
+        public void ReceiveMessage(MethodMessage message, MessageHandle handle)
         {
             messageCallback(new AddressedMessage(connectionId, message), handle).Ignore();
         }

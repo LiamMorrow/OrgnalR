@@ -7,7 +7,7 @@ namespace OrgnalR.Backplane.GrainInterfaces
 {
     public interface IClientGrain : IGrainWithStringKey
     {
-        Task AcceptMessageAsync(HubInvocationMessage message, GrainCancellationToken cancellationToken);
+        Task AcceptMessageAsync(MethodMessage message, GrainCancellationToken cancellationToken);
         /// <summary>
         /// Subscribes to messages for this client, optionally replaying all messages since a last seen message
         /// </summary>
@@ -19,7 +19,7 @@ namespace OrgnalR.Backplane.GrainInterfaces
 
     public interface IClientMessageObserver : IGrainObserver
     {
-        void ReceiveMessage(HubInvocationMessage message, MessageHandle handle);
+        void ReceiveMessage(MethodMessage message, MessageHandle handle);
         void SubscriptionEnded();
     }
 }
