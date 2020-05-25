@@ -6,11 +6,11 @@ namespace OrgnalR.Core.Provider
     public class AddressedMessage
     {
         public string ConnectionId { get; }
-        public HubInvocationMessage Payload { get; }
-        public AddressedMessage(string connectionId, HubInvocationMessage messagePayload)
+        public MethodMessage Payload { get; }
+        public AddressedMessage(string connectionId, MethodMessage payload)
         {
             ConnectionId = connectionId;
-            Payload = messagePayload;
+            Payload = payload;
         }
     }
 

@@ -164,7 +164,7 @@ namespace OrgnalR.SignalR
                     services.GetService<IMessageObservable<T>>(),
                     services.GetService<IMessageObserver<T>>(),
                     services.GetRequiredService<ILogger<OrgnalRHubLifetimeManager<T>>>()
-                ).Result;
+                ).GetAwaiter().GetResult();
             }
             public override Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
             {

@@ -8,7 +8,6 @@
     </PropertyGroup>
     <PropertyGroup>
         <PackageId>OrgnalR.OrleansSilo</PackageId>
-        <Version>1.2.1</Version>
         <Authors>Liam Morrow</Authors>
         <Title>
         OrgnalR Orleans Silo
@@ -17,11 +16,6 @@
         The Orleans silo library for OrgnalR.  This is the package you'd want on the Orleans Silo application.
         For the SignalR server, use OrgnalR.SignalR
         </Description>
-        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <IncludeSource>true</IncludeSource>
-        <RepositoryUrl>https://github.com/LiamMorrow/OrgnalR</RepositoryUrl>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\OrgnalR.Backplane.GrainImplementations\OrgnalR.Backplane.GrainImplementations.csproj" />
