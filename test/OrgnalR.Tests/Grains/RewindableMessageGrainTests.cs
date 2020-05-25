@@ -16,15 +16,16 @@ namespace OrgnalR.Tests.Grains
         [Fact]
         public async Task GetMessageSinceReturnsAllMessagesIfInBounds()
         {
-            Silo.ServiceProvider.AddService(new OrgnalRSiloConfig
-            {
-                MaxMessageRewind = 1
-            });
+            Silo.ServiceProvider.AddService(
+                new OrgnalRSiloConfig
+                {
+                    MaxMessageRewind = 1,
+                });
             var grain = await Silo.CreateGrainAsync<RewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
-            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget1", new object[0])));
+            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new MethodMessage("TestTarget1", new object[0])));
             var since = await grain.GetMessagesSinceAsync(handle);
             Assert.Empty(since);
-            var secondMsg = new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget2", new object[0]));
+            var secondMsg = new AnonymousMessage(new HashSet<string>(), new MethodMessage("TestTarget2", new object[0]));
             var handle2 = await grain.PushMessageAsync(secondMsg);
             since = await grain.GetMessagesSinceAsync(handle2);
             Assert.Empty(since);
@@ -44,7 +45,7 @@ namespace OrgnalR.Tests.Grains
             });
             var grain = await Silo.CreateGrainAsync<RewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
             var handles = Enumerable.Range(0, 20)
-                .Select(i => grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage(i.ToString(), new object[0]))))
+                .Select(i => grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new MethodMessage(i.ToString(), new object[0]))))
                 .Select(x => x.Result)
                 .ToList();
 
@@ -75,9 +76,9 @@ namespace OrgnalR.Tests.Grains
                 MaxMessageRewind = 1
             });
             var grain = await Silo.CreateGrainAsync<RewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
-            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget1", new object[0])));
-            await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget2", new object[0])));
-            await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget3", new object[0])));
+            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new MethodMessage("TestTarget1", new object[0])));
+            await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new MethodMessage("TestTarget2", new object[0])));
+            await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new MethodMessage("TestTarget3", new object[0])));
             await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
             {
                 await grain.GetMessagesSinceAsync(handle);
@@ -92,7 +93,7 @@ namespace OrgnalR.Tests.Grains
                 MaxMessageRewind = 1
             });
             var grain = await Silo.CreateGrainAsync<RewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
-            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget1", new object[0])));
+            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new MethodMessage("TestTarget1", new object[0])));
             handle = new MessageHandle(handle.MessageId, Guid.NewGuid());
             Assert.Empty(await grain.GetMessagesSinceAsync(handle));
         }
@@ -105,7 +106,7 @@ namespace OrgnalR.Tests.Grains
                 MaxMessageRewind = 1
             });
             var grain = await Silo.CreateGrainAsync<RewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
-            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new InvocationMessage("TestTarget1", new object[0])));
+            var handle = await grain.PushMessageAsync(new AnonymousMessage(new HashSet<string>(), new MethodMessage("TestTarget1", new object[0])));
             handle = new MessageHandle(handle.MessageId + 1, handle.MessageGroup);
             Assert.Empty(await grain.GetMessagesSinceAsync(handle));
         }

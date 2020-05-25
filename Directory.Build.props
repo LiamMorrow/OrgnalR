@@ -1,0 +1,11 @@
+<Project>
+    <PropertyGroup>
+        <Version>1.3.0-prerelease</Version>
+        <Authors>Liam Morrow</Authors>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <IncludeSource>true</IncludeSource>
+        <RepositoryUrl>https://github.com/LiamMorrow/OrgnalR</RepositoryUrl>
+    </PropertyGroup>
+</Project>

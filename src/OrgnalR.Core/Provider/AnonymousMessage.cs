@@ -6,11 +6,12 @@ namespace OrgnalR.Core.Provider
     public class AnonymousMessage
     {
         public ISet<string> Excluding { get; }
-        public HubInvocationMessage Payload { get; }
-        public AnonymousMessage(ISet<string> excluding, HubInvocationMessage messagePayload)
+        public MethodMessage Payload { get; }
+
+        public AnonymousMessage(ISet<string> excluding, MethodMessage payload)
         {
             Excluding = excluding;
-            Payload = messagePayload;
+            Payload = payload;
         }
     }
 
