@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <Version>1.4.0-prerelease</Version>
+        <Version>1.4.0</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
