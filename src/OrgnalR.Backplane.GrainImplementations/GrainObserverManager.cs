@@ -149,7 +149,7 @@ namespace OrgnalR.Backplane.GrainImplementations
                 if (observer.Value + this.ExpirationDuration < now)
                 {
                     // Expired observers will be removed.
-                    defunct = defunct ?? new List<T>();
+                    defunct ??= new List<T>();
                     defunct.Add(observer.Key);
                     continue;
                 }
