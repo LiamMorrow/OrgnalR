@@ -14,5 +14,6 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     </PropertyGroup>
 </Project>
