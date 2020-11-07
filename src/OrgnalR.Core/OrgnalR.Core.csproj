@@ -16,5 +16,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+        <PackageReference Include="System.IO" Version="4.3.0" />
+        <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
     </ItemGroup>
 </Project>
