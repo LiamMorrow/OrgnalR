@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
-        <Version>1.4.1-prerelease</Version>
+        <Version>1.4.1-prerelease2</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
@@ -14,5 +14,6 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     </PropertyGroup>
 </Project>

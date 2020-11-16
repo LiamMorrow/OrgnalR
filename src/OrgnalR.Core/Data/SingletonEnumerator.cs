@@ -21,9 +21,7 @@ namespace OrgnalR.Core.Data
 
         public bool MoveNext()
         {
-            return !done
-            ? done = true
-            : false;
+            return !done && (done = true);
         }
 
         public void Reset()
