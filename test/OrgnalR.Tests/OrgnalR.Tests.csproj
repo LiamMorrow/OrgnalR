@@ -1,11 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
         <IsPackable>false</IsPackable>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <LangVersion>8.0</LangVersion>
-        <NullableContextOptions>enable</NullableContextOptions>
-        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="2.9.0">

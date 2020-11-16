@@ -1,12 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <LangVersion>8.0</LangVersion>
-        <NullableContextOptions>enable</NullableContextOptions>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-    <PropertyGroup>
         <PackageId>OrgnalR.OrleansSilo</PackageId>
         <Authors>Liam Morrow</Authors>
         <Title>
