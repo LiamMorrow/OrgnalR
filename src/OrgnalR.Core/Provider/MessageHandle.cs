@@ -14,6 +14,7 @@ namespace OrgnalR.Core.Provider
         /// When the group changes, the MessageId cannot be relied on to always be increasing
         /// </summary>
         public Guid MessageGroup { get; }
+
         public MessageHandle(long messageId, Guid messageGroup)
         {
             MessageId = messageId;
@@ -24,6 +25,7 @@ namespace OrgnalR.Core.Provider
         {
             return left.MessageId == right.MessageId && left.MessageGroup == right.MessageGroup;
         }
+
         public static bool operator !=(MessageHandle left, MessageHandle right)
         {
             return left.MessageId != right.MessageId || left.MessageGroup != right.MessageGroup;
@@ -34,7 +36,7 @@ namespace OrgnalR.Core.Provider
             return MessageId.GetHashCode() ^ MessageGroup.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is MessageHandle other)
             {

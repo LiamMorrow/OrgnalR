@@ -248,8 +248,11 @@ namespace OrgnalR.Core.Data
             var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
             foreach (ArraySegment<T> segment in segments)
             {
-                Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
-                newArrayOffset += segment.Count;
+                if (segment.Array is T[])
+                {
+                    Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
+                    newArrayOffset += segment.Count;
+                }
             }
             return newArray;
         }
@@ -262,7 +265,10 @@ namespace OrgnalR.Core.Data
             {
                 for (int i = 0; i < segment.Count; i++)
                 {
-                    yield return segment.Array[segment.Offset + i];
+                    if (segment.Array is T[])
+                    {
+                        yield return segment.Array[segment.Offset + i];
+                    }
                 }
             }
         }
