@@ -4,6 +4,8 @@ using OrgnalR.Backplane.GrainImplementations;
 using Orleans;
 using OrgnalR.Core;
 using Microsoft.Extensions.DependencyInjection;
+using OrgnalR.Core.Provider;
+using OrgnalR.Backplane.GrainAdaptors;
 
 namespace OrgnalR.Silo
 {
@@ -110,6 +112,8 @@ namespace OrgnalR.Silo
                 var conf = new OrgnalRSiloConfig();
                 configure?.Invoke(conf);
                 services.Add(new ServiceDescriptor(typeof(OrgnalRSiloConfig), conf));
+
+                services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
             });
             builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(AnonymousMessageGrain).Assembly).WithReferences());
             return builder;

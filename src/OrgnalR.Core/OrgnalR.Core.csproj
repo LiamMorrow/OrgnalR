@@ -10,14 +10,14 @@
         </Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.3.0">
+        <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.6.2">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.3.0" />
+        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.2" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <!-- We have to explicitly target these two System packages.  There is a conflict between two of our packages. See: https://github.com/LiamMorrow/OrgnalR/issues/13 -->
         <PackageReference Include="System.IO" Version="4.3.0" />
