@@ -12,6 +12,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\OrgnalR.Backplane.GrainImplementations\OrgnalR.Backplane.GrainImplementations.csproj" />
+        <ProjectReference Include="..\OrgnalR.Backplane.GrainAdaptors\OrgnalR.Backplane.GrainAdaptors.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.2" />

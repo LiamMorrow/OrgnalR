@@ -21,25 +21,23 @@ namespace OrgnalR.Backplane
         private const string CONNECTION_LATEST_MESSAGE_KEY = "ORGNALR_LatestClientMessageHandle";
         private bool disposed;
         private readonly HubConnectionStore hubConnectionStore = new HubConnectionStore();
-        private readonly IGroupActorProvider groupActorProvider;
-        private readonly IUserActorProvider userActorProvider;
+        private readonly IActorProviderFactory actorProviderFactory;
         private readonly IMessageObservable messageObservable;
         private readonly IMessageObserver messageObserver;
         private readonly ILogger<OrgnalRHubLifetimeManager<THub>> logger;
+        private readonly string hubName = typeof(THub).Name;
         private SubscriptionHandle? allSubscriptionHandle;
 
         private MessageHandle latestAllMessageHandle;
 
         private OrgnalRHubLifetimeManager(
-            IGroupActorProvider groupActorProvider,
-            IUserActorProvider userActorProvider,
+            IActorProviderFactory actorProviderFactory,
             IMessageObservable messageObservable,
             IMessageObserver messageObserver,
             ILogger<OrgnalRHubLifetimeManager<THub>> logger
             )
         {
-            this.groupActorProvider = groupActorProvider ?? throw new ArgumentNullException(nameof(groupActorProvider));
-            this.userActorProvider = userActorProvider ?? throw new ArgumentNullException(nameof(userActorProvider));
+            this.actorProviderFactory = actorProviderFactory ?? throw new ArgumentNullException(nameof(actorProviderFactory));
             this.messageObservable = messageObservable ?? throw new ArgumentNullException(nameof(messageObservable));
             this.messageObserver = messageObserver ?? throw new ArgumentNullException(nameof(messageObserver));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -54,15 +52,14 @@ namespace OrgnalR.Backplane
         /// <param name="cancellationToken"></param>
         /// <returns>A new instance of <see cref="OrgnalRHubLifetimeManager<THub>" /> that is subscribed to the anonymous message broadcasts</returns>
         public static async Task<OrgnalRHubLifetimeManager<THub>> CreateAsync(
-            IGroupActorProvider groupActorProvider,
-            IUserActorProvider userActorProvider,
+            IActorProviderFactory actorProviderFactory,
             IMessageObservable messageObservable,
             IMessageObserver messageObserver,
             ILogger<OrgnalRHubLifetimeManager<THub>> logger,
             CancellationToken cancellationToken = default
             )
         {
-            var manager = new OrgnalRHubLifetimeManager<THub>(groupActorProvider, userActorProvider, messageObservable, messageObserver, logger);
+            var manager = new OrgnalRHubLifetimeManager<THub>(actorProviderFactory, messageObservable, messageObserver, logger);
             manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(manager.OnAnonymousMessageReceived, manager.OnAnonymousSubscriptionEnd, default, cancellationToken).ConfigureAwait(false);
             return manager;
         }
@@ -73,7 +70,7 @@ namespace OrgnalR.Backplane
 
             if (connection.UserIdentifier != null)
             {
-                await userActorProvider.GetUserActor(connection.UserIdentifier)
+                await actorProviderFactory.GetUserActor(hubName, connection.UserIdentifier)
                     .AddToUserAsync(connection.ConnectionId);
             }
             try
@@ -82,7 +79,7 @@ namespace OrgnalR.Backplane
             }
             catch (ArgumentOutOfRangeException e)
             {
-                logger.LogWarning(e, "Unable to replay client messages since last connect for client {0}", connection.ConnectionId);
+                logger.LogWarning(e, "Unable to replay client messages since last connect for client {connectionId}", connection.ConnectionId);
                 await messageObservable.SubscribeToConnectionAsync(connection.ConnectionId, OnAddressedMessageReceived, OnClientSubscriptionEnd, default);
             }
         }
@@ -93,7 +90,7 @@ namespace OrgnalR.Backplane
             hubConnectionStore.Remove(connection);
             if (connection.UserIdentifier != null)
             {
-                await userActorProvider.GetUserActor(connection.UserIdentifier)
+                await actorProviderFactory.GetUserActor(hubName, connection.UserIdentifier)
                     .RemoveFromUserAsync(connection.ConnectionId);
             }
             await messageObservable.UnsubscribeFromConnectionAsync(connection.ConnectionId);
@@ -101,13 +98,13 @@ namespace OrgnalR.Backplane
 
         public override Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
         {
-            var group = groupActorProvider.GetGroupActor(groupName);
+            var group = actorProviderFactory.GetGroupActor(hubName, groupName);
             return group.AddToGroupAsync(connectionId, cancellationToken);
         }
 
         public override Task RemoveFromGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
         {
-            var group = groupActorProvider.GetGroupActor(groupName);
+            var group = actorProviderFactory.GetGroupActor(hubName, groupName);
             return group.RemoveFromGroupAsync(connectionId, cancellationToken);
         }
 
@@ -139,7 +136,7 @@ namespace OrgnalR.Backplane
                 }
                 else
                 {
-                    toAwait.Add(messageObserver.SendAddressedMessageAsync(msg));
+                    toAwait.Add(messageObserver.SendAddressedMessageAsync(msg, cancellationToken));
                 }
             }
             return Task.WhenAll(toAwait);
@@ -147,13 +144,13 @@ namespace OrgnalR.Backplane
 
         public override Task SendGroupAsync(string groupName, string methodName, object[] args, CancellationToken cancellationToken = default)
         {
-            var group = groupActorProvider.GetGroupActor(groupName);
+            var group = actorProviderFactory.GetGroupActor(hubName, groupName);
             return group.AcceptMessageAsync(new AnonymousMessage(EmptySet<string>.Instance, new MethodMessage(methodName, args)), cancellationToken);
         }
 
         public override Task SendGroupExceptAsync(string groupName, string methodName, object[] args, IReadOnlyList<string> excludedConnectionIds, CancellationToken cancellationToken = default)
         {
-            var group = groupActorProvider.GetGroupActor(groupName);
+            var group = actorProviderFactory.GetGroupActor(hubName, groupName);
             return group.AcceptMessageAsync(new AnonymousMessage(excludedConnectionIds.ToSet(), new MethodMessage(methodName, args)), cancellationToken);
         }
 
@@ -166,7 +163,7 @@ namespace OrgnalR.Backplane
 
         public override Task SendUserAsync(string userId, string methodName, object[] args, CancellationToken cancellationToken = default)
         {
-            var user = userActorProvider.GetUserActor(userId);
+            var user = actorProviderFactory.GetUserActor(hubName, userId);
             return user.AcceptMessageAsync(new AnonymousMessage(EmptySet<string>.Instance, new MethodMessage(methodName, args)), cancellationToken);
         }
 

@@ -12,7 +12,7 @@
           Add the ability to send messages to clients from outside of the hub, in the silo (like the IHubContext interface)
         </PackageReleaseNotes>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <LangVersion>9.0</LangVersion>
+        <LangVersion>10.0</LangVersion>
         <Nullable>enable</Nullable>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     </PropertyGroup>
