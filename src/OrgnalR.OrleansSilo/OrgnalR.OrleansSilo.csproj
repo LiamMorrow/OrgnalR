@@ -14,7 +14,7 @@
         <ProjectReference Include="..\OrgnalR.Backplane.GrainImplementations\OrgnalR.Backplane.GrainImplementations.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.3.0" />
-        <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.3.0" />
+        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.2" />
+        <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.2" />
     </ItemGroup>
 </Project>
