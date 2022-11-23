@@ -15,7 +15,7 @@
         <ProjectReference Include="..\OrgnalR.Backplane.GrainAdaptors\OrgnalR.Backplane.GrainAdaptors.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.2" />
-        <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.2" />
+        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.5" />
+        <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.5" />
     </ItemGroup>
 </Project>

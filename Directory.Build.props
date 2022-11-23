@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
-        <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
-        <Version>1.5.0</Version>
+        <TargetFrameworks>net7.0;net6.0;netstandard2.0</TargetFrameworks>
+        <Version>2.0.0</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
@@ -9,7 +9,7 @@
         <IncludeSource>true</IncludeSource>
         <RepositoryUrl>https://github.com/LiamMorrow/OrgnalR</RepositoryUrl>
         <PackageReleaseNotes>
-          Add the ability to send messages to clients from outside of the hub, in the silo (like the IHubContext interface)
+          Updated all dependencies, and to .net7
         </PackageReleaseNotes>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>10.0</LangVersion>
