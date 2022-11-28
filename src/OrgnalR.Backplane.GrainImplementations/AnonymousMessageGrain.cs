@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core.Provider;
@@ -17,19 +18,19 @@ namespace OrgnalR.Backplane.GrainImplementations
         };
         private IRewindableMessageGrain<AnonymousMessage> rewoundMessagesGrain = null!;
 
-        public override Task OnActivateAsync()
+        public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             rewoundMessagesGrain = GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(this.GetPrimaryKeyString());
-            return base.OnActivateAsync();
+            return base.OnActivateAsync(cancellationToken);
         }
 
-        public override Task OnDeactivateAsync()
+        public override Task OnDeactivateAsync(DeactivationReason deactivationReason, CancellationToken cancellationToken)
         {
             foreach (var observer in observers)
             {
                 observer.SubscriptionEnded();
             }
-            return base.OnDeactivateAsync();
+            return base.OnDeactivateAsync(deactivationReason, cancellationToken);
         }
 
         public async Task AcceptMessageAsync(AnonymousMessage message, GrainCancellationToken cancellationToken)

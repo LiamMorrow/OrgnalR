@@ -34,7 +34,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
         {
             var handle = new SubscriptionHandle(Guid.NewGuid());
             var handler = new DelegateAnonymousMessageObserver(handle, messageCallback, onSubscriptionEnd);
-            var handlerRef = await grainFactory.CreateObjectReference<IAnonymousMessageObserver>(handler).ConfigureAwait(false);
+            var handlerRef = await Task.FromResult(grainFactory.CreateObjectReference<IAnonymousMessageObserver>(handler)).ConfigureAwait(false);
             anonymousObservers[handle.SubscriptionId] = (handler, handlerRef);
             var messageGrain = grainFactory.GetGrain<IAnonymousMessageGrain>(hubName);
             await messageGrain.SubscribeToMessages(handlerRef, since).ConfigureAwait(false);
@@ -59,7 +59,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
             CancellationToken cancellationToken = default)
         {
             var handler = new DelegateClientMessageObserver(connectionId, messageCallback, onSubscriptionEnd);
-            var handlerRef = await grainFactory.CreateObjectReference<IClientMessageObserver>(handler).ConfigureAwait(false);
+            var handlerRef = await Task.FromResult(grainFactory.CreateObjectReference<IClientMessageObserver>(handler)).ConfigureAwait(false);
             clientObservers[connectionId] = (handler, handlerRef);
             var messageGrain = grainFactory.GetGrain<IClientGrain>($"{hubName}::{connectionId}");
             await messageGrain.SubscribeToMessages(handlerRef, since).ConfigureAwait(false);

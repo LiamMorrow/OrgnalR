@@ -8,12 +8,13 @@
         <Description>
         A core package of OrgnalR.  You likely want one of either `OrgnalR.SignalR`, or `OrgnalR.OrleansSilo`
         </Description>
+	    <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.0.0" />
+    </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\OrgnalR.Backplane.GrainInterfaces\OrgnalR.Backplane.GrainInterfaces.csproj" />
         <ProjectReference Include="..\OrgnalR.Core\OrgnalR.Core.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="7.0.0" />
     </ItemGroup>
 </Project>

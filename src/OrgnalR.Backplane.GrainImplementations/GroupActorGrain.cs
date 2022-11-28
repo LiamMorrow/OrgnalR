@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core;
@@ -15,16 +16,16 @@ namespace OrgnalR.Backplane.GrainImplementations
     {
         private bool dirty = false;
 
-        public override Task OnActivateAsync()
+        public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             RegisterTimer(WriteStateIfDirty, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
-            return base.OnActivateAsync();
+            return base.OnActivateAsync(cancellationToken);
         }
 
-        public override async Task OnDeactivateAsync()
+        public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
         {
             await WriteStateIfDirty(null);
-            await base.OnDeactivateAsync();
+            await base.OnDeactivateAsync(reason, cancellationToken);
         }
 
         private Task WriteStateIfDirty(object? _)

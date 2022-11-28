@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR.Protocol;
 using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core.Provider;
 using Orleans;
@@ -18,19 +17,19 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         private IRewindableMessageGrain<MethodMessage> rewoundMessagesGrain = null!;
 
-        public override Task OnActivateAsync()
+        public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             rewoundMessagesGrain = GrainFactory.GetGrain<IRewindableMessageGrain<MethodMessage>>(this.GetPrimaryKeyString());
-            return base.OnActivateAsync();
+            return base.OnActivateAsync(cancellationToken);
         }
 
-        public override Task OnDeactivateAsync()
+        public override Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
         {
             foreach (var observer in observers)
             {
                 observer.SubscriptionEnded();
             }
-            return base.OnDeactivateAsync();
+            return base.OnDeactivateAsync(reason, cancellationToken);
         }
 
         public async Task AcceptMessageAsync(MethodMessage message, GrainCancellationToken cancellationToken)

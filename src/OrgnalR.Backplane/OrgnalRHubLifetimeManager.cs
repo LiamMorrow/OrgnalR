@@ -108,22 +108,22 @@ namespace OrgnalR.Backplane
             return group.RemoveFromGroupAsync(connectionId, cancellationToken);
         }
 
-        public override Task SendAllAsync(string methodName, object[] args, CancellationToken cancellationToken = default)
+        public override Task SendAllAsync(string methodName, object?[] args, CancellationToken cancellationToken = default)
         {
             return messageObserver.SendAllMessageAsync(new AnonymousMessage(EmptySet<string>.Instance, new MethodMessage(methodName, args)), cancellationToken);
         }
 
-        public override Task SendAllExceptAsync(string methodName, object[] args, IReadOnlyList<string> excludedConnectionIds, CancellationToken cancellationToken = default)
+        public override Task SendAllExceptAsync(string methodName, object?[] args, IReadOnlyList<string> excludedConnectionIds, CancellationToken cancellationToken = default)
         {
             return messageObserver.SendAllMessageAsync(new AnonymousMessage(excludedConnectionIds.ToSet(), new MethodMessage(methodName, args)), cancellationToken);
         }
 
-        public override Task SendConnectionAsync(string connectionId, string methodName, object[] args, CancellationToken cancellationToken = default)
+        public override Task SendConnectionAsync(string connectionId, string methodName, object?[] args, CancellationToken cancellationToken = default)
         {
             return SendConnectionsAsync(new SingletonList<string>(connectionId), methodName, args, cancellationToken);
         }
 
-        public override Task SendConnectionsAsync(IReadOnlyList<string> connectionIds, string methodName, object[] args, CancellationToken cancellationToken = default)
+        public override Task SendConnectionsAsync(IReadOnlyList<string> connectionIds, string methodName, object?[] args, CancellationToken cancellationToken = default)
         {
             var toAwait = new List<Task>();
             foreach (var connectionId in connectionIds)
@@ -142,32 +142,32 @@ namespace OrgnalR.Backplane
             return Task.WhenAll(toAwait);
         }
 
-        public override Task SendGroupAsync(string groupName, string methodName, object[] args, CancellationToken cancellationToken = default)
+        public override Task SendGroupAsync(string groupName, string methodName, object?[] args, CancellationToken cancellationToken = default)
         {
             var group = actorProviderFactory.GetGroupActor(hubName, groupName);
             return group.AcceptMessageAsync(new AnonymousMessage(EmptySet<string>.Instance, new MethodMessage(methodName, args)), cancellationToken);
         }
 
-        public override Task SendGroupExceptAsync(string groupName, string methodName, object[] args, IReadOnlyList<string> excludedConnectionIds, CancellationToken cancellationToken = default)
+        public override Task SendGroupExceptAsync(string groupName, string methodName, object?[] args, IReadOnlyList<string> excludedConnectionIds, CancellationToken cancellationToken = default)
         {
             var group = actorProviderFactory.GetGroupActor(hubName, groupName);
             return group.AcceptMessageAsync(new AnonymousMessage(excludedConnectionIds.ToSet(), new MethodMessage(methodName, args)), cancellationToken);
         }
 
-        public override Task SendGroupsAsync(IReadOnlyList<string> groupNames, string methodName, object[] args, CancellationToken cancellationToken = default)
+        public override Task SendGroupsAsync(IReadOnlyList<string> groupNames, string methodName, object?[] args, CancellationToken cancellationToken = default)
         {
             return Task.WhenAll(
                 groupNames.Select(group => SendGroupAsync(group, methodName, args, cancellationToken))
             );
         }
 
-        public override Task SendUserAsync(string userId, string methodName, object[] args, CancellationToken cancellationToken = default)
+        public override Task SendUserAsync(string userId, string methodName, object?[] args, CancellationToken cancellationToken = default)
         {
             var user = actorProviderFactory.GetUserActor(hubName, userId);
             return user.AcceptMessageAsync(new AnonymousMessage(EmptySet<string>.Instance, new MethodMessage(methodName, args)), cancellationToken);
         }
 
-        public override Task SendUsersAsync(IReadOnlyList<string> userIds, string methodName, object[] args, CancellationToken cancellationToken = default)
+        public override Task SendUsersAsync(IReadOnlyList<string> userIds, string methodName, object?[] args, CancellationToken cancellationToken = default)
         {
             return Task.WhenAll(
                 userIds.Select(userId => SendUserAsync(userId, methodName, args, cancellationToken))
@@ -261,7 +261,10 @@ namespace OrgnalR.Backplane
         {
             if (connection.Items.TryGetValue(CONNECTION_LATEST_MESSAGE_KEY, out var latestClientMessageHandle))
             {
-                return (MessageHandle)latestClientMessageHandle;
+                if (latestClientMessageHandle != null)
+                {
+                    return (MessageHandle) latestClientMessageHandle;
+                }
             }
 
             return default;

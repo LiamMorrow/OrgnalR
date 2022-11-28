@@ -11,6 +11,7 @@ using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core.Provider;
 using OrgnalR.Core.State;
 using Orleans;
+using Orleans.Hosting;
 
 namespace OrgnalR.SignalR
 {
@@ -23,9 +24,6 @@ namespace OrgnalR.SignalR
         /// <returns>The configured orleans client builder</returns>
         public static IClientBuilder UseOrgnalR(this IClientBuilder builder)
         {
-            builder.ConfigureApplicationParts(
-                parts => parts.AddApplicationPart(typeof(IAnonymousMessageGrain).Assembly)
-            );
             return builder;
         }
     }
@@ -222,7 +220,7 @@ namespace OrgnalR.SignalR
 
             public override Task SendAllAsync(
                 string methodName,
-                object[] args,
+                object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
@@ -231,7 +229,7 @@ namespace OrgnalR.SignalR
 
             public override Task SendAllExceptAsync(
                 string methodName,
-                object[] args,
+                object?[] args,
                 IReadOnlyList<string> excludedConnectionIds,
                 CancellationToken cancellationToken = default
             )
@@ -247,7 +245,7 @@ namespace OrgnalR.SignalR
             public override Task SendConnectionAsync(
                 string connectionId,
                 string methodName,
-                object[] args,
+                object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
@@ -262,7 +260,7 @@ namespace OrgnalR.SignalR
             public override Task SendConnectionsAsync(
                 IReadOnlyList<string> connectionIds,
                 string methodName,
-                object[] args,
+                object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
@@ -277,7 +275,7 @@ namespace OrgnalR.SignalR
             public override Task SendGroupAsync(
                 string groupName,
                 string methodName,
-                object[] args,
+                object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
@@ -287,7 +285,7 @@ namespace OrgnalR.SignalR
             public override Task SendGroupExceptAsync(
                 string groupName,
                 string methodName,
-                object[] args,
+                object?[] args,
                 IReadOnlyList<string> excludedConnectionIds,
                 CancellationToken cancellationToken = default
             )
@@ -304,7 +302,7 @@ namespace OrgnalR.SignalR
             public override Task SendGroupsAsync(
                 IReadOnlyList<string> groupNames,
                 string methodName,
-                object[] args,
+                object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
@@ -314,7 +312,7 @@ namespace OrgnalR.SignalR
             public override Task SendUserAsync(
                 string userId,
                 string methodName,
-                object[] args,
+                object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
@@ -324,7 +322,7 @@ namespace OrgnalR.SignalR
             public override Task SendUsersAsync(
                 IReadOnlyList<string> userIds,
                 string methodName,
-                object[] args,
+                object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
