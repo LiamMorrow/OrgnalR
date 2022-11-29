@@ -9,7 +9,6 @@
         The SignalR library for OrgnalR.  This is the package you'd want on the SignalR server.
         For the Orleans Silo, use OrgnalR.OrleansSilo
         </Description>
-	    <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.Orleans.Client" Version="7.0.0" />
