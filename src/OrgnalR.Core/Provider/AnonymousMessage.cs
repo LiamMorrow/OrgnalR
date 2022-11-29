@@ -1,11 +1,14 @@
 using System.Collections.Generic;
-using Microsoft.AspNetCore.SignalR.Protocol;
+using Orleans;
 
 namespace OrgnalR.Core.Provider
 {
+    [GenerateSerializer]
     public class AnonymousMessage
     {
+        [Id(0)]
         public ISet<string> Excluding { get; }
+        [Id(1)]
         public MethodMessage Payload { get; }
 
         public AnonymousMessage(ISet<string> excluding, MethodMessage payload)
