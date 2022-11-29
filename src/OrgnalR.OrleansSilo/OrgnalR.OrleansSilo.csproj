@@ -9,13 +9,13 @@
         The Orleans silo library for OrgnalR.  This is the package you'd want on the Orleans Silo application.
         For the SignalR server, use OrgnalR.SignalR
         </Description>
+	    <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\OrgnalR.Backplane.GrainImplementations\OrgnalR.Backplane.GrainImplementations.csproj" />
         <ProjectReference Include="..\OrgnalR.Backplane.GrainAdaptors\OrgnalR.Backplane.GrainAdaptors.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.5" />
-        <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.5" />
+        <PackageReference Include="Microsoft.Orleans.Server" Version="7.0.0" />
     </ItemGroup>
 </Project>

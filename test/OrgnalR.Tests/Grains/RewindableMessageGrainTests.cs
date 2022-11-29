@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR.Protocol;
 using OrgnalR.Backplane.GrainImplementations;
 using OrgnalR.Core.Provider;
 using Orleans.TestKit;

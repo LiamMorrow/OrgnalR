@@ -1,7 +1,6 @@
 <Project>
     <PropertyGroup>
-        <TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
-        <Version>2.0.0</Version>
+	    <Version>2.0.0</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
@@ -12,7 +11,7 @@
           Updated all dependencies, and to .net7
         </PackageReleaseNotes>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <LangVersion>10.0</LangVersion>
+        <LangVersion>11.0</LangVersion>
         <Nullable>enable</Nullable>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     </PropertyGroup>

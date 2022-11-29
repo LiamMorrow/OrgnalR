@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using OrgnalR.Backplane.GrainInterfaces;
 using System.Threading.Tasks;
 using Orleans;
@@ -22,7 +23,7 @@ namespace OrgnalR.Backplane.GrainImplementations
         private bool dirty = false;
 
 
-        public override Task OnActivateAsync()
+        public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             var config = (OrgnalRSiloConfig?)ServiceProvider?.GetService(typeof(OrgnalRSiloConfig));
             maxMessages = config?.MaxMessageRewind ?? 0;
@@ -31,18 +32,18 @@ namespace OrgnalR.Backplane.GrainImplementations
                 State = new RewindableMessageGrainState<T>
                 {
                     MessageGroup = Guid.NewGuid(),
-                    Messages = new RewindableMessageWrapper<T>[0]
+                    Messages = Array.Empty<RewindableMessageWrapper<T>>()
                 };
             }
             messageBuffer = new CircularBuffer<RewindableMessageWrapper<T>>(maxMessages, State.Messages);
             RegisterTimer(WriteStateIfDirtyAsync, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
-            return base.OnActivateAsync();
+            return base.OnActivateAsync(cancellationToken);
         }
 
-        public override async Task OnDeactivateAsync()
+        public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
         {
             await WriteStateIfDirtyAsync(null);
-            await base.OnDeactivateAsync();
+            await base.OnDeactivateAsync(reason ,cancellationToken);
         }
 
         public Task<List<(T message, MessageHandle handle)>> GetMessagesSinceAsync(MessageHandle handle)

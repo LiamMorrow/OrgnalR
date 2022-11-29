@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/test/OrgnalR.Tests/bin/Debug/netcoreapp2.2/OrgnalR.Tests.dll",
+            "program": "${workspaceFolder}/test/OrgnalR.Tests/bin/Debug/net7.0/OrgnalR.Tests.dll",
             "args": [],
             "cwd": "${workspaceFolder}/test/OrgnalR.Tests",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
