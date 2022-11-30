@@ -85,6 +85,11 @@ var builder = new SiloHostBuilder()
 
 And that's it! Your SignalR server will now use the OrgnalR backplane to send messages, and maintain groups / users.
 
+# Examples
+
+Examples can be found in the example directory https://github.com/LiamMorrow/OrgnalR/tree/master/example
+The current example is a chat room which uses grains to store the messages, and OrgnalR as a SignalR backplane. React frontend.
+
 # Contributing
 
 Contributions are welcome! Simply fork the repository, and submit a PR. If you have an issue, feel free to submit an issue :)
