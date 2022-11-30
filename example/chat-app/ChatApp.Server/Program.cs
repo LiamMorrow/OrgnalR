@@ -1,8 +1,16 @@
+using ChatApp.Server.Hubs;
+using OrgnalR.SignalR;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Host.UseOrleansClient(client =>
+{
+    client.UseLocalhostClustering();
+});
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -16,12 +24,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-
+app.MapHub<ChatHub>("/chat");
 app.MapFallbackToFile("index.html");
 
 app.Run();

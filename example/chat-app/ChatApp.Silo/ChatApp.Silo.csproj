@@ -12,4 +12,8 @@
     <ProjectReference Include="..\ChatApp.GrainInterfaces\ChatApp.GrainInterfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Server" Version="7.0.0" />
+  </ItemGroup>
+
 </Project>
