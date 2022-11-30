@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using ChatApp.GrainInterfaces;
 using ChatApp.GrainInterfaces.Model;
 using ChatApp.Server.Clients;
-using ChatApp.Server.Model;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.Server.Hubs;
