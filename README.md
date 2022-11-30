@@ -87,7 +87,7 @@ And that's it! Your SignalR server will now use the OrgnalR backplane to send me
 
 # Examples
 
-Examples can be found in the example directory https://github.com/LiamMorrow/OrgnalR/tree/master/example
+Examples can be found in the [example directory](example)
 The current example is a chat room which uses grains to store the messages, and OrgnalR as a SignalR backplane. React frontend.
 
 # Contributing
