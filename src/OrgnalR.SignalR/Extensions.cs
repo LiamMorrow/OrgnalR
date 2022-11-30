@@ -15,19 +15,6 @@ using Orleans.Hosting;
 
 namespace OrgnalR.SignalR
 {
-    public static class SiloClientExtensions
-    {
-        /// <summary>
-        /// Configures the Orleans client to use the OrgnalR grain interfaces
-        /// </summary>
-        /// <param name="builder">The orleans client builder to configure</param>
-        /// <returns>The configured orleans client builder</returns>
-        public static IClientBuilder UseOrgnalR(this IClientBuilder builder)
-        {
-            return builder;
-        }
-    }
-
     public static class SignalRExtensions
     {
         /// <summary>

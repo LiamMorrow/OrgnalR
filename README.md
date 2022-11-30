@@ -1,11 +1,11 @@
 # OrgnalR
 
 [![Actions Status](https://github.com/LiamMorrow/OrgnalR/workflows/build/badge.svg)](https://github.com/LiamMorrow/OrgnalR/actions)
-[![Actions Status](https://github.com/LiamMorrow/OrgnalR/workflows/test/badge.svg)](https://github.com/LiamMorrow/OrgnalR/actions)  
-OrgnalR is a backplane for [SignalR core](https://github.com/aspnet/AspNetCore/tree/master/src/SignalR), implemented through [Orleans](https://github.com/dotnet/orleans)!  
+[![Actions Status](https://github.com/LiamMorrow/OrgnalR/workflows/test/badge.svg)](https://github.com/LiamMorrow/OrgnalR/actions)
+OrgnalR is a backplane for [SignalR core](https://github.com/aspnet/AspNetCore/tree/master/src/SignalR), implemented through [Orleans](https://github.com/dotnet/orleans)!
 It allows your SignalR servers to scale out with all the capacity of Orleans grains.
 
-This is an alternative to the Redis backplane, and [SignalR.Orleans](https://github.com/OrleansContrib/SignalR.Orleans).  This implementation does not use Orleans streams at all. This project was born out of issues with deadlocks that occured with Orleans streams, and since  [SignalR.Orleans](https://github.com/OrleansContrib/SignalR.Orleans) uses them, issues with signalr messages not going through.
+This is an alternative to the Redis backplane, and [SignalR.Orleans](https://github.com/OrleansContrib/SignalR.Orleans). This implementation does not use Orleans streams at all. This project was born out of issues with deadlocks that occured with Orleans streams, and since [SignalR.Orleans](https://github.com/OrleansContrib/SignalR.Orleans) uses them, issues with signalr messages not going through.
 
 ## Getting started
 
@@ -16,12 +16,15 @@ OrgnalR comes in two packages, one for the Orleans Silo, and one for the SignalR
 #### SignalR
 
 <a href="https://www.nuget.org/packages/OrgnalR.Signalr">![OrgnalR SignalR](https://img.shields.io/nuget/v/OrgnalR.SignalR?logo=SignalR)</a>
+
 ```
 dotnet add package OrgnalR.SignalR
 ```
 
 #### Orleans Silo
+
 <a href="https://www.nuget.org/packages/OrgnalR.OrleansSilo">![OrgnalR OrleansSilo](https://img.shields.io/nuget/v/OrgnalR.OrleansSilo?logo=OrleansSilo)</a>
+
 ```
 dotnet add package OrgnalR.OrleansSilo
 ```
@@ -32,21 +35,13 @@ OrgnalR can be configured via extension methods on both the Orleans client/silo 
 
 #### SignalR
 
-Somewhere in your `Startup.cs` (or wherever you configure your SignalR server), you will need to add two extension methods. One on the SignalR builder, and one on the Orleans ClientBuilder. These extension methods live in the `OrgnalR.SignalR` namespace, so be sure to add a using for that namespace.
+Somewhere in your `Startup.cs` (or wherever you configure your SignalR server), you will need to add an extension method to the SignalR builder. The extension method lives in the `OrgnalR.SignalR` namespace, so be sure to add a using for that namespace.
 
 ```c#
 using OrgnalR.SignalR;
 class Startup {
     public void ConfigureServices(IServiceCollection services)
     {
-        /* All your other services */
-        services.AddSingleton<IClusterClient>(serviceProvider =>
-        {
-            return new ClientBuilder()
-            /* Your other orleans client configuration */
-                .UseOrgnalR()
-                .Build();
-        });
         services.AddSignalR()
                 .UseOrgnalR();
     }
