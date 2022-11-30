@@ -1,4 +1,4 @@
-using ChatApp.Server.Model;
+using ChatApp.GrainInterfaces.Model;
 
 namespace ChatApp.Server.Clients;
 
