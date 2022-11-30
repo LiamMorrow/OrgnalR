@@ -20,7 +20,7 @@ public class TestSiloConfigurationsMax1 : ISiloConfigurator
         siloBuilder.AddOrgnalRWithMemoryGrainStorage();
         siloBuilder.ConfigureServices(services =>
         {
-            services.AddTransient(config => new OrgnalRSiloConfig {MaxMessageRewind = 1});
+            services.AddTransient(config => new OrgnalRSiloConfig { MaxMessageRewind = 1 });
         });
     }
 }
@@ -32,7 +32,7 @@ public class TestSiloConfigurationsMax10 : ISiloConfigurator
         siloBuilder.AddOrgnalRWithMemoryGrainStorage();
         siloBuilder.ConfigureServices(services =>
         {
-            services.AddTransient(config => new OrgnalRSiloConfig {MaxMessageRewind = 10});
+            services.AddTransient(config => new OrgnalRSiloConfig { MaxMessageRewind = 10 });
         });
     }
 }
@@ -48,7 +48,9 @@ public class RewindableMessageGrainTests
         builder.AddSiloBuilderConfigurator<TestSiloConfigurationsMax1>();
         Cluster = builder.Build();
         await Cluster.DeployAsync();
-        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
+        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(
+            Guid.NewGuid().ToString()
+        );
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
@@ -59,7 +61,7 @@ public class RewindableMessageGrainTests
         Assert.Empty(since);
         var secondMsg = new AnonymousMessage(
             new HashSet<string>(),
-            new MethodMessage("TestTarget2", Array.Empty<object>())
+            new MethodMessage("TestTarget2", new[] { "Message 2" })
         );
         var handle2 = await grain.PushMessageAsync(secondMsg);
         since = await grain.GetMessagesSinceAsync(handle2);
@@ -67,7 +69,7 @@ public class RewindableMessageGrainTests
         since = await grain.GetMessagesSinceAsync(handle);
         Assert.NotEmpty(since);
         Assert.Equal(handle2, since.Single().handle);
-        Assert.Equal(secondMsg, since.Single().message);
+        Assert.Equal(secondMsg.Payload.Args[0], since.Single().message.Payload.Args[0]);
     }
 
     [Fact]
@@ -79,9 +81,9 @@ public class RewindableMessageGrainTests
         Cluster = builder.Build();
         await Cluster.DeployAsync();
 
-        var grain =
-            Cluster.GrainFactory
-                .GetGrain<IRewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
+        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(
+            Guid.NewGuid().ToString()
+        );
         var handles = Enumerable
             .Range(0, 20)
             .Select(
@@ -109,7 +111,8 @@ public class RewindableMessageGrainTests
                     .SkipWhile(x => x.MessageId <= handles[i].MessageId)
                     .ToList();
                 Assert.Equal(expectedSinceHandles, since.Select(x => x.handle).ToList());
-                if (i != handles.Count - 1) Assert.NotEmpty(since);
+                if (i != handles.Count - 1)
+                    Assert.NotEmpty(since);
             }
     }
 
@@ -120,7 +123,9 @@ public class RewindableMessageGrainTests
         builder.AddSiloBuilderConfigurator<TestSiloConfigurationsMax1>();
         Cluster = builder.Build();
         await Cluster.DeployAsync();
-        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
+        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(
+            Guid.NewGuid().ToString()
+        );
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
@@ -152,7 +157,9 @@ public class RewindableMessageGrainTests
         builder.AddSiloBuilderConfigurator<TestSiloConfigurationsMax1>();
         Cluster = builder.Build();
         await Cluster.DeployAsync();
-        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
+        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(
+            Guid.NewGuid().ToString()
+        );
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
@@ -170,7 +177,9 @@ public class RewindableMessageGrainTests
         builder.AddSiloBuilderConfigurator<TestSiloConfigurationsMax1>();
         Cluster = builder.Build();
         await Cluster.DeployAsync();
-        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(Guid.NewGuid().ToString());
+        var grain = Cluster.GrainFactory.GetGrain<IRewindableMessageGrain<AnonymousMessage>>(
+            Guid.NewGuid().ToString()
+        );
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
