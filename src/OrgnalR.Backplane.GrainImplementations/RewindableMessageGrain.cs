@@ -13,15 +13,15 @@ using OrgnalR.Core.Data;
 namespace OrgnalR.Backplane.GrainImplementations
 {
     [StorageProvider(ProviderName = Constants.MESSAGE_STORAGE_PROVIDER)]
-    public class RewindableMessageGrain<T> : Grain<RewindableMessageGrainState<T>>, IRewindableMessageGrain<T>
+    public class RewindableMessageGrain<T>
+        : Grain<RewindableMessageGrainState<T>>,
+            IRewindableMessageGrain<T>
     {
-
         private int maxMessages;
         private CircularBuffer<RewindableMessageWrapper<T>> messageBuffer = null!;
         private long OldestMessageId => messageBuffer.Front().MessageId;
         private long LatestMessageId => State.LatestMessageId;
         private bool dirty = false;
-
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
@@ -35,18 +35,31 @@ namespace OrgnalR.Backplane.GrainImplementations
                     Messages = Array.Empty<RewindableMessageWrapper<T>>()
                 };
             }
-            messageBuffer = new CircularBuffer<RewindableMessageWrapper<T>>(maxMessages, State.Messages);
-            RegisterTimer(WriteStateIfDirtyAsync, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            messageBuffer = new CircularBuffer<RewindableMessageWrapper<T>>(
+                maxMessages,
+                State.Messages
+            );
+            RegisterTimer(
+                WriteStateIfDirtyAsync,
+                null,
+                TimeSpan.FromSeconds(30),
+                TimeSpan.FromSeconds(30)
+            );
             return base.OnActivateAsync(cancellationToken);
         }
 
-        public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
+        public override async Task OnDeactivateAsync(
+            DeactivationReason reason,
+            CancellationToken cancellationToken
+        )
         {
             await WriteStateIfDirtyAsync(null);
-            await base.OnDeactivateAsync(reason ,cancellationToken);
+            await base.OnDeactivateAsync(reason, cancellationToken);
         }
 
-        public Task<List<(T message, MessageHandle handle)>> GetMessagesSinceAsync(MessageHandle handle)
+        public Task<List<(T message, MessageHandle handle)>> GetMessagesSinceAsync(
+            MessageHandle handle
+        )
         {
             var messageIdExclusive = handle.MessageId;
             if (messageIdExclusive >= LatestMessageId || handle.MessageGroup != State.MessageGroup)
@@ -63,7 +76,9 @@ namespace OrgnalR.Backplane.GrainImplementations
             var messages = messageBuffer.SkipWhile(x => x.MessageId <= messageIdExclusive).ToList();
             return Task.FromResult(
                 messages
-                    .Select(msg => (msg.Message, new MessageHandle(msg.MessageId, State.MessageGroup)))
+                    .Select(
+                        msg => (msg.Message, new MessageHandle(msg.MessageId, State.MessageGroup))
+                    )
                     .ToList()
             );
         }
@@ -93,17 +108,30 @@ namespace OrgnalR.Backplane.GrainImplementations
             return WriteStateAsync();
         }
     }
+
+    [GenerateSerializer]
     public class RewindableMessageGrainState<T>
     {
+        [Id(0)]
         public Guid MessageGroup { get; set; }
+
+        [Id(1)]
         public long LatestMessageId { get; set; }
+
+        [Id(2)]
         public RewindableMessageWrapper<T>[] Messages { get; set; } = null!;
     }
 
+    [GenerateSerializer]
     public class RewindableMessageWrapper<T>
     {
+        [Id(0)]
         public long MessageId { get; set; }
+
+        [Id(1)]
         public DateTimeOffset SentAt { get; set; }
+
+        [Id(2)]
         public T Message { get; set; } = default!;
     }
 }
