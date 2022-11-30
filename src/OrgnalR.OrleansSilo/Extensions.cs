@@ -77,6 +77,7 @@ namespace OrgnalR.Silo
                     configure?.Invoke(conf);
                     services.Add(new ServiceDescriptor(typeof(OrgnalRSiloConfig), conf));
 
+                    services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
                     services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
                 }
             );
