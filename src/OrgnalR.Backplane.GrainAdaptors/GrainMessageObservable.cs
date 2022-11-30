@@ -50,6 +50,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
                 messageCallback,
                 onSubscriptionEnd
             );
+
             var messageGrain = grainFactory.GetGrain<IAnonymousMessageGrain>(hubName);
             var handlerRef = grainFactory.CreateObjectReference<IAnonymousMessageObserver>(handler);
             anonymousObservers[handle.SubscriptionId] = (handler, handlerRef);

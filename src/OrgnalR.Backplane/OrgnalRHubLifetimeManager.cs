@@ -21,10 +21,11 @@ namespace OrgnalR.Backplane
     {
         private const string CONNECTION_LATEST_MESSAGE_KEY = "ORGNALR_LatestClientMessageHandle";
         private bool disposed;
-        private readonly HubConnectionStore hubConnectionStore = new HubConnectionStore();
+        private readonly HubConnectionStore hubConnectionStore = new();
         private readonly IActorProviderFactory actorProviderFactory;
         private readonly IMessageObservable messageObservable;
         private readonly IMessageObserver messageObserver;
+        private readonly IMessageArgsSerializer messageArgsSerializer;
         private readonly ILogger<OrgnalRHubLifetimeManager<THub>> logger;
         private readonly string hubName = typeof(THub).Name;
         private SubscriptionHandle? allSubscriptionHandle;
@@ -35,6 +36,7 @@ namespace OrgnalR.Backplane
             IActorProviderFactory actorProviderFactory,
             IMessageObservable messageObservable,
             IMessageObserver messageObserver,
+            IMessageArgsSerializer messageArgsSerializer,
             ILogger<OrgnalRHubLifetimeManager<THub>> logger
         )
         {
@@ -45,6 +47,9 @@ namespace OrgnalR.Backplane
                 messageObservable ?? throw new ArgumentNullException(nameof(messageObservable));
             this.messageObserver =
                 messageObserver ?? throw new ArgumentNullException(nameof(messageObserver));
+            this.messageArgsSerializer =
+                messageArgsSerializer
+                ?? throw new ArgumentNullException(nameof(messageArgsSerializer));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -61,6 +66,7 @@ namespace OrgnalR.Backplane
             IActorProviderFactory actorProviderFactory,
             IMessageObservable messageObservable,
             IMessageObserver messageObserver,
+            IMessageArgsSerializer messageArgsSerializer,
             ILogger<OrgnalRHubLifetimeManager<THub>> logger,
             CancellationToken cancellationToken = default
         )
@@ -69,6 +75,7 @@ namespace OrgnalR.Backplane
                 actorProviderFactory,
                 messageObservable,
                 messageObserver,
+                messageArgsSerializer,
                 logger
             );
             await Task.Delay(5000, cancellationToken);
@@ -157,7 +164,7 @@ namespace OrgnalR.Backplane
             return messageObserver.SendAllMessageAsync(
                 new AnonymousMessage(
                     EmptySet<string>.Instance,
-                    new MethodMessage(methodName, args)
+                    new MethodMessage(methodName, messageArgsSerializer.Serialize(args))
                 ),
                 cancellationToken
             );
@@ -173,7 +180,7 @@ namespace OrgnalR.Backplane
             return messageObserver.SendAllMessageAsync(
                 new AnonymousMessage(
                     excludedConnectionIds.ToSet(),
-                    new MethodMessage(methodName, args)
+                    new MethodMessage(methodName, messageArgsSerializer.Serialize(args))
                 ),
                 cancellationToken
             );
@@ -205,7 +212,10 @@ namespace OrgnalR.Backplane
             foreach (var connectionId in connectionIds)
             {
                 var local = hubConnectionStore[connectionId];
-                var msg = new AddressedMessage(connectionId, new MethodMessage(methodName, args));
+                var msg = new AddressedMessage(
+                    connectionId,
+                    new MethodMessage(methodName, messageArgsSerializer.Serialize(args))
+                );
                 if (local != null)
                 {
                     toAwait.Add(OnAddressedMessageReceived(msg, default));
@@ -229,7 +239,7 @@ namespace OrgnalR.Backplane
             return group.AcceptMessageAsync(
                 new AnonymousMessage(
                     EmptySet<string>.Instance,
-                    new MethodMessage(methodName, args)
+                    new MethodMessage(methodName, messageArgsSerializer.Serialize(args))
                 ),
                 cancellationToken
             );
@@ -247,7 +257,7 @@ namespace OrgnalR.Backplane
             return group.AcceptMessageAsync(
                 new AnonymousMessage(
                     excludedConnectionIds.ToSet(),
-                    new MethodMessage(methodName, args)
+                    new MethodMessage(methodName, messageArgsSerializer.Serialize(args))
                 ),
                 cancellationToken
             );
@@ -278,7 +288,7 @@ namespace OrgnalR.Backplane
             return user.AcceptMessageAsync(
                 new AnonymousMessage(
                     EmptySet<string>.Instance,
-                    new MethodMessage(methodName, args)
+                    new MethodMessage(methodName, messageArgsSerializer.Serialize(args))
                 ),
                 cancellationToken
             );
@@ -324,7 +334,10 @@ namespace OrgnalR.Backplane
             if (connection.ConnectionAborted.IsCancellationRequested)
                 return;
             await connection.WriteAsync(
-                new InvocationMessage(arg.Payload.MethodName, arg.Payload.Args)
+                new InvocationMessage(
+                    arg.Payload.MethodName,
+                    messageArgsSerializer.Deserialize(arg.Payload.SerializedArgs)
+                )
             );
 
             var latestClientMessageHandle = GetClientMessageHandle(connection);
@@ -384,7 +397,12 @@ namespace OrgnalR.Backplane
                 if (conn.ConnectionAborted.IsCancellationRequested)
                     continue;
                 toAwait.Add(
-                    conn.WriteAsync(new InvocationMessage(msg.Payload.MethodName, msg.Payload.Args))
+                    conn.WriteAsync(
+                        new InvocationMessage(
+                            msg.Payload.MethodName,
+                            messageArgsSerializer.Deserialize(msg.Payload.SerializedArgs)
+                        )
+                    )
                 );
             }
             await Task.WhenAll(toAwait.Where(vt => !vt.IsCompleted).Select(vt => vt.AsTask()));
