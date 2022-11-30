@@ -10,7 +10,7 @@ builder.Host.UseOrleansClient(client =>
     client.UseLocalhostClustering();
 });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().UseOrgnalR();
 
 builder.Services.AddCors(
     c =>
