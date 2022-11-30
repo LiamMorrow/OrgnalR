@@ -39,24 +39,8 @@ namespace OrgnalR.SignalR
         /// <returns>The same same builder, configured to use OrgnalR</returns>
         public static ISignalRBuilder UseOrgnalR(this ISignalRBuilder builder)
         {
-            try
-            {
-                try
-                {
-                    // Most people will register their client as an IClusterClient.
-                    builder.Services.AddSingleton<IGrainFactory>(
-                        s => s.GetRequiredService<IClusterClient>()
-                    );
-                }
-                catch
-                { /* Do nothing, already added */
-                }
-                // Will pull the grain factory from the registered services
-                builder.Services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
-            }
-            catch
-            { /* Do nothing, already added */
-            }
+            // Will pull the grain factory from the registered services
+            builder.Services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
             builder.Services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
             builder.Services.AddSingleton(
                 typeof(IMessageObservable<>),
@@ -175,66 +159,75 @@ namespace OrgnalR.SignalR
 
         public class OrgnalRHubLifetimeManagerFactory<T> : HubLifetimeManager<T> where T : Hub
         {
-            readonly OrgnalRHubLifetimeManager<T> @delegate;
+            readonly Task<OrgnalRHubLifetimeManager<T>> @delegate;
 
             public OrgnalRHubLifetimeManagerFactory(IServiceProvider services)
             {
-                @delegate = OrgnalRHubLifetimeManager<T>
-                    .CreateAsync(
-                        services.GetRequiredService<IActorProviderFactory>(),
-                        services.GetRequiredService<IMessageObservable<T>>(),
-                        services.GetRequiredService<IMessageObserver<T>>(),
-                        services.GetRequiredService<ILogger<OrgnalRHubLifetimeManager<T>>>()
-                    )
-                    .GetAwaiter()
-                    .GetResult();
+                @delegate = OrgnalRHubLifetimeManager<T>.CreateAsync(
+                    services.GetRequiredService<IActorProviderFactory>(),
+                    services.GetRequiredService<IMessageObservable<T>>(),
+                    services.GetRequiredService<IMessageObserver<T>>(),
+                    services.GetRequiredService<ILogger<OrgnalRHubLifetimeManager<T>>>()
+                );
             }
 
-            public override Task AddToGroupAsync(
+            public override async Task AddToGroupAsync(
                 string connectionId,
                 string groupName,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.AddToGroupAsync(connectionId, groupName, cancellationToken);
+                await (await @delegate).AddToGroupAsync(connectionId, groupName, cancellationToken);
             }
 
-            public override Task OnConnectedAsync(HubConnectionContext connection)
+            public override async Task OnConnectedAsync(HubConnectionContext connection)
             {
-                return @delegate.OnConnectedAsync(connection);
+                try
+                {
+                    await (await @delegate).OnConnectedAsync(connection);
+                }
+                catch (Exception error)
+                {
+                    Console.Error.WriteLine(error);
+                    throw;
+                }
             }
 
-            public override Task OnDisconnectedAsync(HubConnectionContext connection)
+            public override async Task OnDisconnectedAsync(HubConnectionContext connection)
             {
-                return @delegate.OnDisconnectedAsync(connection);
+                await (await @delegate).OnDisconnectedAsync(connection);
             }
 
-            public override Task RemoveFromGroupAsync(
+            public override async Task RemoveFromGroupAsync(
                 string connectionId,
                 string groupName,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.RemoveFromGroupAsync(connectionId, groupName, cancellationToken);
+                await (await @delegate).RemoveFromGroupAsync(
+                    connectionId,
+                    groupName,
+                    cancellationToken
+                );
             }
 
-            public override Task SendAllAsync(
+            public override async Task SendAllAsync(
                 string methodName,
                 object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendAllAsync(methodName, args, cancellationToken);
+                await (await @delegate).SendAllAsync(methodName, args, cancellationToken);
             }
 
-            public override Task SendAllExceptAsync(
+            public override async Task SendAllExceptAsync(
                 string methodName,
                 object?[] args,
                 IReadOnlyList<string> excludedConnectionIds,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendAllExceptAsync(
+                await (await @delegate).SendAllExceptAsync(
                     methodName,
                     args,
                     excludedConnectionIds,
@@ -242,14 +235,14 @@ namespace OrgnalR.SignalR
                 );
             }
 
-            public override Task SendConnectionAsync(
+            public override async Task SendConnectionAsync(
                 string connectionId,
                 string methodName,
                 object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendConnectionAsync(
+                await (await @delegate).SendConnectionAsync(
                     connectionId,
                     methodName,
                     args,
@@ -257,14 +250,14 @@ namespace OrgnalR.SignalR
                 );
             }
 
-            public override Task SendConnectionsAsync(
+            public override async Task SendConnectionsAsync(
                 IReadOnlyList<string> connectionIds,
                 string methodName,
                 object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendConnectionsAsync(
+                await (await @delegate).SendConnectionsAsync(
                     connectionIds,
                     methodName,
                     args,
@@ -272,17 +265,22 @@ namespace OrgnalR.SignalR
                 );
             }
 
-            public override Task SendGroupAsync(
+            public override async Task SendGroupAsync(
                 string groupName,
                 string methodName,
                 object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendGroupAsync(groupName, methodName, args, cancellationToken);
+                await (await @delegate).SendGroupAsync(
+                    groupName,
+                    methodName,
+                    args,
+                    cancellationToken
+                );
             }
 
-            public override Task SendGroupExceptAsync(
+            public override async Task SendGroupExceptAsync(
                 string groupName,
                 string methodName,
                 object?[] args,
@@ -290,7 +288,7 @@ namespace OrgnalR.SignalR
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendGroupExceptAsync(
+                await (await @delegate).SendGroupExceptAsync(
                     groupName,
                     methodName,
                     args,
@@ -299,34 +297,44 @@ namespace OrgnalR.SignalR
                 );
             }
 
-            public override Task SendGroupsAsync(
+            public override async Task SendGroupsAsync(
                 IReadOnlyList<string> groupNames,
                 string methodName,
                 object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendGroupsAsync(groupNames, methodName, args, cancellationToken);
+                await (await @delegate).SendGroupsAsync(
+                    groupNames,
+                    methodName,
+                    args,
+                    cancellationToken
+                );
             }
 
-            public override Task SendUserAsync(
+            public override async Task SendUserAsync(
                 string userId,
                 string methodName,
                 object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendUserAsync(userId, methodName, args, cancellationToken);
+                await (await @delegate).SendUserAsync(userId, methodName, args, cancellationToken);
             }
 
-            public override Task SendUsersAsync(
+            public override async Task SendUsersAsync(
                 IReadOnlyList<string> userIds,
                 string methodName,
                 object?[] args,
                 CancellationToken cancellationToken = default
             )
             {
-                return @delegate.SendUsersAsync(userIds, methodName, args, cancellationToken);
+                await (await @delegate).SendUsersAsync(
+                    userIds,
+                    methodName,
+                    args,
+                    cancellationToken
+                );
             }
         }
         #endregion

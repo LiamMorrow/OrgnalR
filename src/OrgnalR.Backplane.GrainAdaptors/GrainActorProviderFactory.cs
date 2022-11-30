@@ -4,23 +4,27 @@ using Orleans;
 
 namespace OrgnalR.Backplane.GrainAdaptors;
 
-
 public class GrainActorProviderFactory : IActorProviderFactory
 {
-    private readonly IGrainFactory grainFactory;
+    private readonly IGrainFactoryProvider grainFactoryProvider;
 
-    public GrainActorProviderFactory(IGrainFactory grainFactory)
+    public GrainActorProviderFactory(IGrainFactoryProvider grainFactoryProvider)
     {
-        this.grainFactory = grainFactory;
+        this.grainFactoryProvider = grainFactoryProvider;
     }
 
     public IGroupActor GetGroupActor(string hubName, string groupName)
     {
-        return new GrainActorProvider(hubName, grainFactory).GetGroupActor(groupName);
+        return new GrainActorProvider(
+            hubName,
+            grainFactoryProvider.GetGrainFactory()
+        ).GetGroupActor(groupName);
     }
 
     public IUserActor GetUserActor(string hubName, string userId)
     {
-        return new GrainActorProvider(hubName, grainFactory).GetUserActor(userId);
+        return new GrainActorProvider(hubName, grainFactoryProvider.GetGrainFactory()).GetUserActor(
+            userId
+        );
     }
 }

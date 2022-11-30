@@ -12,6 +12,7 @@ namespace OrgnalR.Silo
     {
         public const string GROUP_STORAGE_PROVIDER = Constants.GROUP_STORAGE_PROVIDER;
         public const string USER_STORAGE_PROVIDER = Constants.USER_STORAGE_PROVIDER;
+
         /// <summary>
         /// This will store messages for each SignalR message stream, allowing clients to resubscribe without missing any messages
         /// This is a best effort resubscribe, and can be configured via <see cref="OrgnalRSiloConfig"/>
@@ -26,23 +27,32 @@ namespace OrgnalR.Silo
         /// </summary>
         /// <param name="builder">The builder to configure</param>
         /// <returns>The silo builder, configured with memory storage and grains for the OrgnalR backplane</returns>
-        public static ISiloBuilder AddOrgnalRWithMemoryGrainStorage(this ISiloBuilder builder, Action<OrgnalRSiloConfig>? configure = null)
+        public static ISiloBuilder AddOrgnalRWithMemoryGrainStorage(
+            this ISiloBuilder builder,
+            Action<OrgnalRSiloConfig>? configure = null
+        )
         {
             try
             {
                 builder.AddMemoryGrainStorage(Constants.GROUP_STORAGE_PROVIDER);
             }
-            catch { /* Do nothing, already added  */}
+            catch
+            { /* Do nothing, already added  */
+            }
             try
             {
                 builder.AddMemoryGrainStorage(Constants.USER_STORAGE_PROVIDER);
             }
-            catch { /* Do nothing, already added  */}
+            catch
+            { /* Do nothing, already added  */
+            }
             try
             {
                 builder.AddMemoryGrainStorage(Constants.MESSAGE_STORAGE_PROVIDER);
             }
-            catch { /* Do nothing, already added  */}
+            catch
+            { /* Do nothing, already added  */
+            }
 
             return builder.AddOrgnalR(configure);
         }
@@ -55,16 +65,21 @@ namespace OrgnalR.Silo
         /// </summary>
         /// <param name="builder">The builder to configure</param>
         /// <returns>The silo builder, configured with grains for the OrgnalR backplane</returns>
-        public static ISiloBuilder AddOrgnalR(this ISiloBuilder builder, Action<OrgnalRSiloConfig>? configure = null)
+        public static ISiloBuilder AddOrgnalR(
+            this ISiloBuilder builder,
+            Action<OrgnalRSiloConfig>? configure = null
+        )
         {
-            builder.ConfigureServices((services) =>
-            {
-                var conf = new OrgnalRSiloConfig();
-                configure?.Invoke(conf);
-                services.Add(new ServiceDescriptor(typeof(OrgnalRSiloConfig), conf));
+            builder.ConfigureServices(
+                (services) =>
+                {
+                    var conf = new OrgnalRSiloConfig();
+                    configure?.Invoke(conf);
+                    services.Add(new ServiceDescriptor(typeof(OrgnalRSiloConfig), conf));
 
-                services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
-            });
+                    services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
+                }
+            );
             return builder;
         }
     }
