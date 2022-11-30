@@ -24,6 +24,9 @@ public class ChatHub : Hub<IChatClient>
 
     public async Task SendMessage(SendMessageRequest request)
     {
+        await clusterClient
+            .GetGrain<IChatGrain>(request.ChatName)
+            .SendMessageAsync(new ChatMessage(request.SenderName, request.Message));
         await Clients.Group(request.ChatName).NewMessage(request);
     }
 }

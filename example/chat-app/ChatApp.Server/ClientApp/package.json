@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "bootstrap": "^5.2.0",
-    "http-proxy-middleware": "^2.0.6",
+    "@microsoft/signalr": "^7.0.0",
     "jquery": "^3.6.0",
     "merge": "^2.1.1",
     "oidc-client": "^1.11.5",
@@ -40,13 +39,6 @@
     "eslint-plugin-react": "^7.30.1",
     "nan": "^2.16.0",
     "typescript": "^4.7.4"
-  },
-  "overrides": {
-    "autoprefixer": "10.4.5"
-  },
-  "resolutions": {
-    "css-what": "^5.0.1",
-    "nth-check": "^3.0.1"
   },
   "scripts": {
     "prestart": "node aspnetcore-https && node aspnetcore-react",

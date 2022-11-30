@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import AppRoutes from './AppRoutes';
+import React, { useState } from 'react';
 import { Layout } from './components/Layout';
-import './custom.css';
+import { Chat } from './components/Chat'
+import { Home } from './components/Home'
 
-export default class App extends Component {
-  static displayName = App.name;
 
-  render() {
-    return (
-      <Layout>
-        <Routes>
-          {AppRoutes.map((route, index) => {
-            const { element, ...rest } = route;
-            return <Route key={index} {...rest} element={element} />;
-          })}
-        </Routes>
-      </Layout>
-    );
-  }
+const App = (props) => {
+  const [state, setState] = useState({
+    currentChat: undefined,
+    chatMessages: []
+  })
+  props.onReceiveMessage((message) => setState({ ...state, chatMessages: [...state.chatMessages, message] }))
+  const joinChat = (chatName) => props.joinChat(chatName).then((messages) => setState({ currentChat: chatName, chatMessages: messages }))
+  return (
+    <Layout>
+      {state.currentChat ? <Chat chatName={state.currentChat} chatMessages={state.chatMessages} sendMessage={props.sendMessage} /> : <Home joinChat={joinChat}></Home>}
+    </Layout>
+  );
 }
+
+export default App
