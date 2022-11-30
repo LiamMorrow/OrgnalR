@@ -6,4 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\OrgnalR.OrleansSilo\OrgnalR.OrleansSilo.csproj" />
+    <ProjectReference Include="..\..\..\src\OrgnalR.SignalR\OrgnalR.SignalR.csproj" />
+    <ProjectReference Include="..\ChatApp.GrainInterfaces\ChatApp.GrainInterfaces.csproj" />
+  </ItemGroup>
+
 </Project>
