@@ -28,6 +28,7 @@ namespace OrgnalR.SignalR
         {
             // Will pull the grain factory from the registered services
             builder.Services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
+            builder.Services.AddSingleton<IMessageArgsSerializer, OrleansMessageArgsSerializer>();
             builder.Services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
             builder.Services.AddSingleton(
                 typeof(IMessageObservable<>),
@@ -154,6 +155,7 @@ namespace OrgnalR.SignalR
                     services.GetRequiredService<IActorProviderFactory>(),
                     services.GetRequiredService<IMessageObservable<T>>(),
                     services.GetRequiredService<IMessageObserver<T>>(),
+                    services.GetRequiredService<IMessageArgsSerializer>(),
                     services.GetRequiredService<ILogger<OrgnalRHubLifetimeManager<T>>>()
                 );
             }

@@ -48,7 +48,24 @@ class Startup {
 }
 ```
 
-That's it on the SignalR side. There is no difference between a production and a development environment for the SignalR client.
+Next, Orleans needs to know how to serialize your Hub Requests and Responses.
+The easiest way to achieve this is to annotate your request/response classes with the `GenerateSerializer` attribute, as you would with any of your normal grain models.
+
+Example:
+
+```c#
+[GenerateSerializer]
+public record SendMessageRequest(string ChatName, string SenderName, string Message);
+
+// Usage in a hub
+public class ChatHub : Hub<IChatClient>
+{
+
+    public async Task SendMessage(SendMessageRequest request)
+}
+```
+
+Please see the [example directory](example) for a fully working solution.
 
 #### Orleans Silo
 

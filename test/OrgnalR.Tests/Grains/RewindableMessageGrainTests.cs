@@ -54,14 +54,14 @@ public class RewindableMessageGrainTests
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
-                new MethodMessage("TestTarget1", Array.Empty<object>())
+                new MethodMessage("TestTarget1", Array.Empty<byte>())
             )
         );
         var since = await grain.GetMessagesSinceAsync(handle);
         Assert.Empty(since);
         var secondMsg = new AnonymousMessage(
             new HashSet<string>(),
-            new MethodMessage("TestTarget2", new[] { "Message 2" })
+            new MethodMessage("TestTarget2", new byte[] { 1, 2, 3 })
         );
         var handle2 = await grain.PushMessageAsync(secondMsg);
         since = await grain.GetMessagesSinceAsync(handle2);
@@ -69,7 +69,10 @@ public class RewindableMessageGrainTests
         since = await grain.GetMessagesSinceAsync(handle);
         Assert.NotEmpty(since);
         Assert.Equal(handle2, since.Single().handle);
-        Assert.Equal(secondMsg.Payload.Args[0], since.Single().message.Payload.Args[0]);
+        Assert.Equal(
+            secondMsg.Payload.SerializedArgs,
+            since.Single().message.Payload.SerializedArgs
+        );
     }
 
     [Fact]
@@ -91,7 +94,7 @@ public class RewindableMessageGrainTests
                     grain.PushMessageAsync(
                         new AnonymousMessage(
                             new HashSet<string>(),
-                            new MethodMessage(i.ToString(), Array.Empty<object>())
+                            new MethodMessage(i.ToString(), Array.Empty<byte>())
                         )
                     )
             )
@@ -129,19 +132,19 @@ public class RewindableMessageGrainTests
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
-                new MethodMessage("TestTarget1", Array.Empty<object>())
+                new MethodMessage("TestTarget1", Array.Empty<byte>())
             )
         );
         await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
-                new MethodMessage("TestTarget2", Array.Empty<object>())
+                new MethodMessage("TestTarget2", Array.Empty<byte>())
             )
         );
         await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
-                new MethodMessage("TestTarget3", Array.Empty<object>())
+                new MethodMessage("TestTarget3", Array.Empty<byte>())
             )
         );
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
@@ -163,7 +166,7 @@ public class RewindableMessageGrainTests
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
-                new MethodMessage("TestTarget1", new object[0])
+                new MethodMessage("TestTarget1", Array.Empty<byte>())
             )
         );
         handle = new MessageHandle(handle.MessageId, Guid.NewGuid());
@@ -183,7 +186,7 @@ public class RewindableMessageGrainTests
         var handle = await grain.PushMessageAsync(
             new AnonymousMessage(
                 new HashSet<string>(),
-                new MethodMessage("TestTarget1", new object[0])
+                new MethodMessage("TestTarget1", Array.Empty<byte>())
             )
         );
         handle = new MessageHandle(handle.MessageId + 1, handle.MessageGroup);
