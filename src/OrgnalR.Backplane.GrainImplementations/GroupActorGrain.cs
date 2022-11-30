@@ -18,11 +18,19 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            RegisterTimer(WriteStateIfDirty, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            RegisterTimer(
+                WriteStateIfDirty,
+                null,
+                TimeSpan.FromSeconds(30),
+                TimeSpan.FromSeconds(30)
+            );
             return base.OnActivateAsync(cancellationToken);
         }
 
-        public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
+        public override async Task OnDeactivateAsync(
+            DeactivationReason reason,
+            CancellationToken cancellationToken
+        )
         {
             await WriteStateIfDirty(null);
             await base.OnDeactivateAsync(reason, cancellationToken);
@@ -30,18 +38,25 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         private Task WriteStateIfDirty(object? _)
         {
-            if (dirty) return Task.CompletedTask;
+            if (dirty)
+                return Task.CompletedTask;
             return WriteStateAsync();
         }
 
-        public Task AcceptMessageAsync(AnonymousMessage message, GrainCancellationToken cancellationToken)
+        public Task AcceptMessageAsync(
+            AnonymousMessage message,
+            GrainCancellationToken cancellationToken
+        )
         {
             return Task.WhenAll(
-                 State.ConnectionIds
-                 .Where(connId => !message.Excluding.Contains(connId))
-                 .Select(connId => GrainFactory.GetGrain<IClientGrain>(connId))
-                 .Select(client => client.AcceptMessageAsync(message.Payload, cancellationToken))
-             ).WithCancellation(cancellationToken.CancellationToken);
+                    State.ConnectionIds
+                        .Where(connId => !message.Excluding.Contains(connId))
+                        .Select(connId => GrainFactory.GetGrain<IClientGrain>(connId))
+                        .Select(
+                            client => client.AcceptMessageAsync(message.Payload, cancellationToken)
+                        )
+                )
+                .WithCancellation(cancellationToken.CancellationToken);
         }
 
         public Task AddToGroupAsync(string connectionId, GrainCancellationToken cancellationToken)
@@ -50,16 +65,20 @@ namespace OrgnalR.Backplane.GrainImplementations
             return Task.CompletedTask;
         }
 
-        public Task RemoveFromGroupAsync(string connectionId, GrainCancellationToken cancellationToken)
+        public Task RemoveFromGroupAsync(
+            string connectionId,
+            GrainCancellationToken cancellationToken
+        )
         {
             dirty = State.ConnectionIds.Remove(connectionId) || dirty;
             return Task.CompletedTask;
         }
-
     }
 
+    [GenerateSerializer]
     public class GroupActorGrainState
     {
+        [Id(0)]
         public ISet<string> ConnectionIds { get; set; } = new HashSet<string>();
     }
 }
