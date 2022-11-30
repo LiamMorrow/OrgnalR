@@ -1,4 +1,4 @@
-namespace ChatApp.GrainInterfaces.Model;
+namespace ChatApp.Server.Model;
 
 [GenerateSerializer]
 public record JoinChatRequest(string ChatName);
