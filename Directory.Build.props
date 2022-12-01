@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <Version>2.0.0-prerelease3</Version>
+        <Version>2.0.0</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
