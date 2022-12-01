@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Orleans;
 
 namespace OrgnalR.Core.Data
 {
+    [GenerateSerializer]
     public class EmptySet<T> : ISet<T>
     {
         private EmptySet() { }
-        public static readonly EmptySet<T> Instance = new EmptySet<T>();
+
+        public static readonly EmptySet<T> Instance = new();
         public int Count => 0;
 
         public bool IsReadOnly => true;
@@ -24,9 +27,7 @@ namespace OrgnalR.Core.Data
 
         public bool Contains(T item) => false;
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-        }
+        public void CopyTo(T[] array, int arrayIndex) { }
 
         public void ExceptWith(IEnumerable<T> other)
         {
@@ -44,6 +45,7 @@ namespace OrgnalR.Core.Data
         }
 
         public bool IsProperSubsetOf(IEnumerable<T> other) => true;
+
         public bool IsProperSupersetOf(IEnumerable<T> other) => !other.Any();
 
         public bool IsSubsetOf(IEnumerable<T> other) => true;
