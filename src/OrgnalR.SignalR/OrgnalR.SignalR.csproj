@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
         <PackageId>OrgnalR.SignalR</PackageId>
         <Authors>Liam Morrow</Authors>
@@ -9,12 +9,13 @@
         The SignalR library for OrgnalR.  This is the package you'd want on the SignalR server.
         For the Orleans Silo, use OrgnalR.OrleansSilo
         </Description>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.Orleans.Client" Version="7.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\OrgnalR.Backplane\OrgnalR.Backplane.csproj" />
+        <ProjectReference Include="..\OrgnalR.Core\OrgnalR.Core.csproj" />
         <ProjectReference Include="..\OrgnalR.Backplane.GrainAdaptors\OrgnalR.Backplane.GrainAdaptors.csproj" />
     </ItemGroup>
 </Project>

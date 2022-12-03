@@ -10,7 +10,7 @@ using OrgnalR.Core;
 using OrgnalR.Core.Data;
 using OrgnalR.Core.Provider;
 
-namespace OrgnalR.Backplane
+namespace OrgnalR.SignalR
 {
     /// <summary>
     /// Implements a SignalR hub backplane through a pub sub mechanism
