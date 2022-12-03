@@ -26,6 +26,7 @@ namespace OrgnalR.SignalR
             builder.Services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
             builder.Services.AddSingleton<IMessageArgsSerializer, OrleansMessageArgsSerializer>();
             builder.Services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
+            builder.Services.AddSingleton<HubContextProvider>();
             builder.Services.AddSingleton(
                 typeof(IMessageObservable<>),
                 typeof(MessageObservableFactory<>)

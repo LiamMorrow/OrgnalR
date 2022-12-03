@@ -79,6 +79,7 @@ namespace OrgnalR.Silo
 
                     services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
                     services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
+                    services.AddSingleton<HubContextProvider>();
                 }
             );
             return builder;
