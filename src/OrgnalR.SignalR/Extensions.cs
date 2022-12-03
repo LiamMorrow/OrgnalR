@@ -5,13 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OrgnalR.Backplane;
 using OrgnalR.Backplane.GrainAdaptors;
-using OrgnalR.Backplane.GrainInterfaces;
 using OrgnalR.Core.Provider;
-using OrgnalR.Core.State;
 using Orleans;
-using Orleans.Hosting;
 
 namespace OrgnalR.SignalR
 {
@@ -30,6 +26,7 @@ namespace OrgnalR.SignalR
             builder.Services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
             builder.Services.AddSingleton<IMessageArgsSerializer, OrleansMessageArgsSerializer>();
             builder.Services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
+            builder.Services.AddSingleton<IHubContextProvider, HubContextProvider>();
             builder.Services.AddSingleton(
                 typeof(IMessageObservable<>),
                 typeof(MessageObservableFactory<>)

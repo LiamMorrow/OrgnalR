@@ -102,6 +102,40 @@ var builder = new SiloHostBuilder()
 
 And that's it! Your SignalR server will now use the OrgnalR backplane to send messages, and maintain groups / users.
 
+## Sending Messages to clients from grains
+
+Sometimes it is useful to send messages to clients from outside of the Hub. SignalR exposes an interface `IHubContext<T>` for this mechanism inside of the server apps which expose SignalR hubs.
+
+However, in the context of an orleans app, this requirement might still be necessary from the Silo host. To facilitate this, OrgnalR exposes a interface: [`IHubContextProvider`](/src/OrgnalR.Core/Provider/HubContextProvider.cs).
+
+To send messages to connected clients in a hub, simply inject this interface into your grain (or service). It exposes methods for getting clients by group/user/connectionID. You can then call `SendAsync` to send them a message. Note that `SendAsync` is an extension method provided by the `Microsoft.AspNetCore.SignalR` namespace.
+
+Example:
+
+```csharp
+class MyGrain: IMyGrain{
+
+    private readonly IHubContextProvider hubContextProvider;
+
+    constructor(IHubContextProvider hubContextProvider)
+    {
+        this.hubContextProvider = hubContextProvider;
+    }
+
+    async Task MyGrainMethod()
+    {
+        // Do stuff
+        // ...
+        // Send message to all connected clients in "MyHub"
+        await hubContextProvider
+            .GetHubContext<IMyHub>()
+            .Clients
+            .All // can also use Group, or User, or Connection
+            .SendAsync("MyClientMethod", new MyClientMethodRequest("Sent a message from a grain!"));
+    }
+}
+```
+
 # Examples
 
 Examples can be found in the [example directory](example)
