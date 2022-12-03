@@ -9,7 +9,7 @@ namespace OrgnalR.Core.Provider;
 
 /// <summary>
 /// A class which can be used to send messages to connected clients.
-/// <see cref=HubContext> </see>
+/// <see cref="HubContext"> </see>
 /// </summary>
 public sealed class ClientMessageSender
 {
