@@ -1,4 +1,3 @@
-using Microsoft.Extensions.ObjectPool;
 using OrgnalR.Core.Provider;
 using Orleans.Serialization;
 
@@ -8,7 +7,7 @@ public class OrleansMessageArgsSerializer : IMessageArgsSerializer
 {
     private readonly Serializer serializer;
 
-    public OrleansMessageArgsSerializer(Orleans.Serialization.Serializer serializer)
+    public OrleansMessageArgsSerializer(Serializer serializer)
     {
         this.serializer = serializer;
     }

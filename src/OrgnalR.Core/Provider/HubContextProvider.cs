@@ -1,5 +1,3 @@
-using Orleans.Serialization;
-
 namespace OrgnalR.Core.Provider;
 
 /// <summary>
@@ -28,9 +26,12 @@ public interface IHubContextProvider
 public sealed class HubContextProvider : IHubContextProvider
 {
     private readonly IActorProviderFactory providerFactory;
-    private readonly Serializer serializer;
+    private readonly IMessageArgsSerializer serializer;
 
-    public HubContextProvider(IActorProviderFactory providerFactory, Serializer serializer)
+    public HubContextProvider(
+        IActorProviderFactory providerFactory,
+        IMessageArgsSerializer serializer
+    )
     {
         this.providerFactory = providerFactory;
         this.serializer = serializer;

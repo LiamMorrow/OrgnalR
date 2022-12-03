@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using OrgnalR.Core.Data;
-using OrgnalR.Core.State;
-using Orleans.Serialization;
 
 namespace OrgnalR.Core.Provider;
 
@@ -12,9 +10,13 @@ public sealed class HubContext
 {
     private readonly string hubName;
     private readonly IActorProviderFactory providerFactory;
-    private readonly Serializer serializer;
+    private readonly IMessageArgsSerializer serializer;
 
-    public HubContext(string hubName, IActorProviderFactory providerFactory, Serializer serializer)
+    public HubContext(
+        string hubName,
+        IActorProviderFactory providerFactory,
+        IMessageArgsSerializer serializer
+    )
     {
         this.hubName = hubName;
         this.providerFactory = providerFactory;

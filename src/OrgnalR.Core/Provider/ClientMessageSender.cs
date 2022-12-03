@@ -1,9 +1,6 @@
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using OrgnalR.Core.State;
-using Orleans.Concurrency;
-using Orleans.Serialization;
 
 namespace OrgnalR.Core.Provider;
 
@@ -14,12 +11,12 @@ namespace OrgnalR.Core.Provider;
 public sealed class ClientMessageSender
 {
     private readonly IMessageAcceptor messageAcceptor;
-    private readonly Serializer serializer;
+    private readonly IMessageArgsSerializer serializer;
     private readonly ISet<string> excluding;
 
     public ClientMessageSender(
         IMessageAcceptor messageAcceptor,
-        Serializer serializer,
+        IMessageArgsSerializer serializer,
         ISet<string> excluding
     )
     {
@@ -33,7 +30,7 @@ public sealed class ClientMessageSender
         return messageAcceptor.AcceptMessageAsync(
             new AnonymousMessage(
                 excluding,
-                new MethodMessage(methodName, serializer.SerializeToArray(parameters))
+                new MethodMessage(methodName, serializer.Serialize(parameters))
             )
         );
     }

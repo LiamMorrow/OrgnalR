@@ -78,6 +78,10 @@ namespace OrgnalR.Silo
                     services.Add(new ServiceDescriptor(typeof(OrgnalRSiloConfig), conf));
 
                     services.AddSingleton<IGrainFactoryProvider, GrainFactoryProvider>();
+                    builder.Services.AddSingleton<
+                        IMessageArgsSerializer,
+                        OrleansMessageArgsSerializer
+                    >();
                     services.AddSingleton<IActorProviderFactory, GrainActorProviderFactory>();
                     services.AddSingleton<IHubContextProvider, HubContextProvider>();
                 }
