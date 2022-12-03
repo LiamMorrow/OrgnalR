@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using OrgnalR.Core.Data;
 
 namespace OrgnalR.Core
 {
     internal static class Util
     {
-
         /// <summary>
         /// DANGEROUS! Ignores the completion of this task. Also ignores exceptions.
         /// Credit to StephenCleary.  Don't quite need AsyncEx yet but if we do decide it's necessary we can remove this
@@ -27,9 +27,13 @@ namespace OrgnalR.Core
             }
         }
 
-
         public static ISet<T> ToSet<T>(this IEnumerable<T> items)
         {
+            if (items is EmptyList<T>)
+            {
+                return EmptySet<T>.Instance;
+            }
+
             return new HashSet<T>(items);
         }
 
@@ -41,7 +45,6 @@ namespace OrgnalR.Core
             }
         }
 
-
         public static Task WithCancellation(this Task source, CancellationToken cancellationToken)
         {
             if (source.IsCompleted)
@@ -49,11 +52,10 @@ namespace OrgnalR.Core
                 return source;
             }
             var cancellationTask = new TaskCompletionSource<int>();
-            cancellationToken.Register(() => cancellationTask.TrySetException(new TaskCanceledException(source)));
-            return Task.WhenAny(
-                source,
-                cancellationTask.Task
+            cancellationToken.Register(
+                () => cancellationTask.TrySetException(new TaskCanceledException(source))
             );
+            return Task.WhenAny(source, cancellationTask.Task);
         }
     }
 }

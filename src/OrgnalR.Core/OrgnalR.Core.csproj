@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
         <PackageId>OrgnalR.Core</PackageId>
         <Authors>Liam Morrow</Authors>
@@ -8,6 +8,7 @@
         <Description>
         A core package of OrgnalR.  You likely want one of either `OrgnalR.SignalR`, or `OrgnalR.OrleansSilo`
         </Description>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="System.IO" Version="4.3.0" />

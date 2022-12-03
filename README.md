@@ -108,7 +108,7 @@ Sometimes it is useful to send messages to clients from outside of the Hub. Sign
 
 However, in the context of an orleans app, this requirement might still be necessary from the Silo host. To facilitate this, OrgnalR exposes a interface: [`IHubContextProvider`](/src/OrgnalR.Core/Provider/HubContextProvider.cs).
 
-To send messages to connected clients in a hub, simply inject this interface into your grain (or service). It exposes methods for getting clients by group/user/connectionID. You can then call `SendAsync` to send them a message.
+To send messages to connected clients in a hub, simply inject this interface into your grain (or service). It exposes methods for getting clients by group/user/connectionID. You can then call `SendAsync` to send them a message. Note that `SendAsync` is an extension method provided by the `Microsoft.AspNetCore.SignalR` namespace.
 
 Example:
 
@@ -129,7 +129,8 @@ class MyGrain: IMyGrain{
         // Send message to all connected clients in "MyHub"
         await hubContextProvider
             .GetHubContext<IMyHub>()
-            .All() // can also use Group, or User, or Connection
+            .Clients
+            .All // can also use Group, or User, or Connection
             .SendAsync("MyClientMethod", new MyClientMethodRequest("Sent a message from a grain!"));
     }
 }
