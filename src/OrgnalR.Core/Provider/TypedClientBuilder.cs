@@ -222,7 +222,7 @@ internal static class TypedClientBuilder<T>
             generator.Emit(OpCodes.Isinst, singleClientProxyType);
             generator.Emit(OpCodes.Brtrue_S, isTypeLabel);
 
-            generator.Emit(OpCodes.Ldstr, "InvokeAsync only works with Single clients.");
+            generator.Emit(OpCodes.Ldstr, "Invoke with non Task return type not supported.");
             generator.Emit(
                 OpCodes.Newobj,
                 typeof(InvalidOperationException).GetConstructor(new Type[] { typeof(string) })!
