@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using OrgnalR.Backplane.GrainInterfaces;
+using OrgnalR.Core;
 using OrgnalR.Core.Provider;
 using Orleans;
-using Orleans.Utilities;
 
 namespace OrgnalR.Backplane.GrainAdaptors
 {
@@ -13,28 +13,26 @@ namespace OrgnalR.Backplane.GrainAdaptors
     {
         private readonly string hubName;
         private readonly IGrainFactory grainFactory;
+        private readonly GrainProviderReadier grainProviderReadier;
         private readonly ConcurrentDictionary<
             Guid,
             (IAnonymousMessageObserver raw, IAnonymousMessageObserver obj)
-        > anonymousObservers =
-            new ConcurrentDictionary<
-                Guid,
-                (IAnonymousMessageObserver raw, IAnonymousMessageObserver obj)
-            >();
+        > anonymousObservers = new();
         private readonly ConcurrentDictionary<
             string,
             (IClientMessageObserver raw, IClientMessageObserver obj)
-        > clientObservers =
-            new ConcurrentDictionary<
-                string,
-                (IClientMessageObserver raw, IClientMessageObserver obj)
-            >();
+        > clientObservers = new();
 
-        public GrainMessageObservable(string hubName, IGrainFactory grainFactory)
+        public GrainMessageObservable(
+            string hubName,
+            IGrainFactory grainFactory,
+            GrainProviderReadier grainProviderReadier
+        )
         {
             this.hubName = hubName ?? throw new ArgumentNullException(nameof(hubName));
             this.grainFactory =
                 grainFactory ?? throw new ArgumentNullException(nameof(grainFactory));
+            this.grainProviderReadier = grainProviderReadier;
         }
 
         public async Task<SubscriptionHandle> SubscribeToAllAsync(
@@ -44,6 +42,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
             CancellationToken cancellationToken = default
         )
         {
+            await grainProviderReadier.ClusterClientReady.WithCancellation(cancellationToken);
             var handle = new SubscriptionHandle(Guid.NewGuid());
             var handler = new DelegateAnonymousMessageObserver(
                 handle,
@@ -63,6 +62,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
             CancellationToken cancellationToken = default
         )
         {
+            await grainProviderReadier.ClusterClientReady.WithCancellation(cancellationToken);
             if (!anonymousObservers.TryRemove(subscriptionHandle.SubscriptionId, out var handler))
             {
                 return;
@@ -79,6 +79,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
             CancellationToken cancellationToken = default
         )
         {
+            await grainProviderReadier.ClusterClientReady.WithCancellation(cancellationToken);
             var handler = new DelegateClientMessageObserver(
                 connectionId,
                 messageCallback,
@@ -98,6 +99,7 @@ namespace OrgnalR.Backplane.GrainAdaptors
             CancellationToken cancellationToken = default
         )
         {
+            await grainProviderReadier.ClusterClientReady.WithCancellation(cancellationToken);
             if (!clientObservers.TryRemove(connectionId, out var handler))
             {
                 return;

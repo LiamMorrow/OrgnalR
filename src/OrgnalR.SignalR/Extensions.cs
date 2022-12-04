@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OrgnalR.Backplane.GrainAdaptors;
 using OrgnalR.Core.Provider;
@@ -38,6 +39,11 @@ namespace OrgnalR.SignalR
             builder.Services.AddSingleton(
                 typeof(HubLifetimeManager<>),
                 typeof(OrgnalRHubLifetimeManagerFactory<>)
+            );
+            builder.Services.AddSingleton<GrainProviderReadier>();
+
+            builder.Services.AddSingleton<ILifecycleParticipant<IClusterClientLifecycle>>(
+                (svc) => svc.GetRequiredService<GrainProviderReadier>()
             );
             return builder;
         }
@@ -85,11 +91,15 @@ namespace OrgnalR.SignalR
         {
             readonly GrainMessageObservable @delegate;
 
-            public MessageObservableFactory(IGrainFactoryProvider grainFactory)
+            public MessageObservableFactory(
+                IGrainFactoryProvider grainFactory,
+                GrainProviderReadier grainProviderReadier
+            )
             {
                 @delegate = new GrainMessageObservable(
                     typeof(T).Name,
-                    grainFactory.GetGrainFactory()
+                    grainFactory.GetGrainFactory(),
+                    grainProviderReadier
                 );
             }
 

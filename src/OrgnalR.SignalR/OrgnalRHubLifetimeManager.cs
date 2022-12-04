@@ -78,7 +78,6 @@ namespace OrgnalR.SignalR
                 messageArgsSerializer,
                 logger
             );
-            await Task.Delay(5000, cancellationToken);
             manager.allSubscriptionHandle = await messageObservable.SubscribeToAllAsync(
                 manager.OnAnonymousMessageReceived,
                 manager.OnAnonymousSubscriptionEnd,
