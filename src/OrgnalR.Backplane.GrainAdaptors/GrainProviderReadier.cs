@@ -14,7 +14,7 @@ public class GrainProviderReadier : ILifecycleParticipant<IClusterClientLifecycl
 
     public GrainProviderReadier(ILogger<GrainProviderReadier> logger)
     {
-        this.logger = logger;
+        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public void Participate(IClusterClientLifecycle observer)
