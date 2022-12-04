@@ -19,7 +19,7 @@ jobs:
         with:
           dotnet-version: 7.0.100
       - name: Run tests
-        run: dotnet test ./test/OrgnalR.Tests /p:CollectCoverage=true
+        run: dotnet test ./test/OrgnalR.Tests  --collect:"XPlat Code Coverage"
       - name: Code Coverage Summary
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
