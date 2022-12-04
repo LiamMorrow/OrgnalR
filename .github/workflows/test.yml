@@ -20,3 +20,7 @@ jobs:
           dotnet-version: 7.0.100
       - name: Run tests
         run: dotnet test ./test/OrgnalR.Tests /p:CollectCoverage=true
+      - name: Code Coverage Summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: "./test/OrgnalR.Tests/TestResults/**/*"
