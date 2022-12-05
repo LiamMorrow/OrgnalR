@@ -9,7 +9,7 @@ This is an alternative to the Redis backplane, and [SignalR.Orleans](https://git
 
 ## Getting started
 ### Compatibility
-Orleans 7.0.0 introduced a large breaking change around serialization and other Orleans primitives.  As of `^2.0.0`, OrgnalR only supports .net/Orleans 7.0.0 and up.  If you need to use this package for an older release of Orleans and .net (including .netstandard), see the `1.X.X` releases.
+Orleans `7.0.0` introduced a large breaking change around serialization and other Orleans primitives.  As of `^2.0.0`, OrgnalR only supports .net/Orleans `7.0.0` and up.  If you need to use this package for an older release of Orleans and .net (including .netstandard), see the `1.X.X` releases.
 
 ### Installing
 
