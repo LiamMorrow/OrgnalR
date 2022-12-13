@@ -127,11 +127,7 @@ public class Game
             }
         }
 
-        var draw = true;
-        foreach (var setSymbol in grid)
-        {
-            draw = draw && setSymbol != null;
-        }
+        var draw = grid.All(x => x.All(x => x != null));
 
         return (false, draw);
     }

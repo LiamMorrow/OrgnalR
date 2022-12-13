@@ -57,9 +57,7 @@ public class GameGrain : IGameGrain, IGrainBase
 
         foreach (var gameStateNotifier in gameStateNotifiers)
         {
-            Console.WriteLine("SENDING");
             gameStateNotifier.NotifyNewGameStateAvailable(this.GetPrimaryKeyString());
-            Console.WriteLine("SENT");
         }
 
         return Task.CompletedTask;
