@@ -15,7 +15,7 @@ const gameHubConnection = new HubConnectionBuilder()
 let notifyOfNewGameState: undefined | ((gameId: string) => void);
 
 gameHubConnection.start().then(() =>
-  gameHubConnection.on("NewGameStateAvailable", async (gameId) => {
+  gameHubConnection.on("NewGameStateAvailable", async (gameId: string) => {
     notifyOfNewGameState && notifyOfNewGameState(gameId);
   })
 );
@@ -42,7 +42,7 @@ const appProps: AppProps = {
   joinGame,
   getGameState,
   attemptPlay,
-  notifyOfNewGameStateCb: (cb) => (notifyOfNewGameState = cb),
+  setNotifyOfNewGameStateCb: (cb) => (notifyOfNewGameState = cb),
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);

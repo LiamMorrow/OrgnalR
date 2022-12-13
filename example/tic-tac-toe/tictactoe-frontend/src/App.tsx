@@ -11,17 +11,17 @@ interface RunningGameState {
 }
 
 export interface AppProps {
-  notifyOfNewGameStateCb: (cb: (gameId: string) => void) => void;
+  setNotifyOfNewGameStateCb: (cb: (gameId: string) => void) => void;
   joinGame: (gameId: string) => Promise<Symbl>;
   attemptPlay: (gameId: string, play: Play) => Promise<void>;
   getGameState: (gameId: string) => Promise<GameState>;
 }
 
-function App({ notifyOfNewGameStateCb, joinGame, attemptPlay, getGameState }: AppProps) {
+function App({ setNotifyOfNewGameStateCb, joinGame, attemptPlay, getGameState }: AppProps) {
   const [runningGameState, setRunningGameState] = useState<RunningGameState | undefined>(undefined);
 
   useEffect(() => {
-    notifyOfNewGameStateCb(async (gameId) => {
+    setNotifyOfNewGameStateCb(async (gameId) => {
       if (runningGameState?.gameId === gameId) {
         setRunningGameState({
           ...runningGameState,
@@ -30,7 +30,7 @@ function App({ notifyOfNewGameStateCb, joinGame, attemptPlay, getGameState }: Ap
         });
       }
     });
-  }, [runningGameState, notifyOfNewGameStateCb, getGameState]);
+  }, [runningGameState, setNotifyOfNewGameStateCb, getGameState]);
 
   const joinGameHandler = (gameId: string) =>
     joinGame(gameId).then(async (symbl) =>
