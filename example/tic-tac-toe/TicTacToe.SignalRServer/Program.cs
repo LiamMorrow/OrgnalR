@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using OrgnalR.SignalR;
 using TicTacToe.SignalRServer.Hubs;
 using TicTacToe.SignalRServer.Services;
@@ -9,7 +10,13 @@ builder.Services.AddOrleansClient(orleans =>
     orleans.UseLocalhostClustering();
 });
 
-builder.Services.AddSignalR().UseOrgnalR();
+builder.Services
+    .AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    })
+    .UseOrgnalR();
 
 builder.Services.AddSingleton<GameService>();
 

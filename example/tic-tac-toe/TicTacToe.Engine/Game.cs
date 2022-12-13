@@ -104,7 +104,7 @@ public class Game
             //we're on a diagonal
             for (int i = 0; i < GRID_SIZE; i++)
             {
-                if (grid[row][col] != symbol)
+                if (grid[row][i] != symbol)
                     break;
                 if (i == GRID_SIZE - 1)
                 {
