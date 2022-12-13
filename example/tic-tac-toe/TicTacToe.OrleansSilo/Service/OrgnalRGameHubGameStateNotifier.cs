@@ -14,12 +14,13 @@ public class OrgnalRGameHubGameStateNotifier : IGameStateNotifier
         this.hubContextProvider = hubContextProvider;
     }
 
-    public Task NotifyNewGameStateAvailable(string gameId)
+    public void NotifyNewGameStateAvailable(string gameId)
     {
         var clientsInGroup = hubContextProvider
             .GetHubContext<IGameHub, IGameHubClient>()
             .Clients.Group(gameId);
 
-        return clientsInGroup.NewGameStateAvailable(gameId);
+        // Ignore result
+        _ = clientsInGroup.NewGameStateAvailable(gameId);
     }
 }

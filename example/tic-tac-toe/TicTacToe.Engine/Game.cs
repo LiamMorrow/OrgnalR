@@ -17,7 +17,10 @@ public class Game
         : this(
             new GameState(
                 Turn: Symbol.X,
-                Grid: new Symbol?[GRID_SIZE, GRID_SIZE],
+                Grid: Enumerable
+                    .Range(0, GRID_SIZE)
+                    .Select((_) => new Symbol?[GRID_SIZE])
+                    .ToArray(),
                 Winner: null,
                 Draw: false
             )
@@ -41,20 +44,21 @@ public class Game
             );
         }
 
-        if (state.Grid[play.Coord.Row, play.Coord.Column] != null)
+        if (state.Grid[play.Coord.Row][play.Coord.Column] != null)
         {
             throw new InvalidOperationException("Already a symbol in that tile");
         }
 
-        var newGrid = new Symbol?[GRID_SIZE, GRID_SIZE];
+        var newGrid = new Symbol?[GRID_SIZE][];
         for (var row = 0; row < GRID_SIZE; row++)
         {
+            newGrid[row] = new Symbol?[GRID_SIZE];
             for (var col = 0; col < GRID_SIZE; col++)
             {
-                newGrid[row, col] = state.Grid[row, col];
+                newGrid[row][col] = state.Grid[row][col];
                 if (row == play.Coord.Row && col == play.Coord.Column)
                 {
-                    newGrid[row, col] = play.Symbol;
+                    newGrid[row][col] = play.Symbol;
                 }
             }
         }
@@ -69,13 +73,13 @@ public class Game
     }
 
     // Adapted from https://stackoverflow.com/questions/1056316/algorithm-for-determining-tic-tac-toe-game-over
-    private static (bool WinningPlay, bool Draw) IsGameOver(Symbol?[,] grid, Play play)
+    private static (bool WinningPlay, bool Draw) IsGameOver(Symbol?[][] grid, Play play)
     {
         var (symbol, (row, col)) = play;
         //check row
         for (int i = 0; i < GRID_SIZE; i++)
         {
-            if (grid[row, i] != symbol)
+            if (grid[row][i] != symbol)
                 break;
             if (i == GRID_SIZE - 1)
             {
@@ -86,7 +90,7 @@ public class Game
         //check col
         for (int i = 0; i < GRID_SIZE; i++)
         {
-            if (grid[i, col] != symbol)
+            if (grid[i][col] != symbol)
                 break;
             if (i == GRID_SIZE - 1)
             {
@@ -100,7 +104,7 @@ public class Game
             //we're on a diagonal
             for (int i = 0; i < GRID_SIZE; i++)
             {
-                if (grid[row, col] != symbol)
+                if (grid[row][col] != symbol)
                     break;
                 if (i == GRID_SIZE - 1)
                 {
@@ -114,7 +118,7 @@ public class Game
         {
             for (int i = 0; i < GRID_SIZE; i++)
             {
-                if (grid[i, (GRID_SIZE - 1) - i] != symbol)
+                if (grid[i][(GRID_SIZE - 1) - i] != symbol)
                     break;
                 if (i == GRID_SIZE - 1)
                 {

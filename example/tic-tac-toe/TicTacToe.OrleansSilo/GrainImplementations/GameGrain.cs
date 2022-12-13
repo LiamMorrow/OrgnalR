@@ -1,6 +1,7 @@
 using Orleans.Runtime;
 using TicTacToe.Engine;
 using TicTacToe.Interfaces.Grains;
+using TicTacToe.OrleansSilo.Service;
 using TicTacToe.Shared.Models;
 
 namespace TicTacToe.OrleansSilo.GrainImplementations;
@@ -11,10 +12,12 @@ public class GameGrain : IGameGrain, IGrainBase
 
     private readonly Game game = new();
     private readonly Dictionary<Symbol, string> users = new();
+    private readonly IEnumerable<IGameStateNotifier> gameStateNotifiers;
 
-    public GameGrain(IGrainContext grainContext)
+    public GameGrain(IGrainContext grainContext, IEnumerable<IGameStateNotifier> gameStateNotifiers)
     {
         this.GrainContext = grainContext;
+        this.gameStateNotifiers = gameStateNotifiers;
     }
 
     public Task<Symbol> JoinGameAsync(string gameId, string userId)
@@ -51,6 +54,13 @@ public class GameGrain : IGameGrain, IGrainBase
         }
 
         game.AttemptPlay(play);
+
+        foreach (var gameStateNotifier in gameStateNotifiers)
+        {
+            Console.WriteLine("SENDING");
+            gameStateNotifier.NotifyNewGameStateAvailable(this.GetPrimaryKeyString());
+            Console.WriteLine("SENT");
+        }
 
         return Task.CompletedTask;
     }

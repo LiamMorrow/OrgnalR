@@ -19,4 +19,4 @@ public record Coord(int Row, int Column);
 public record Play(Symbol Symbol, Coord Coord);
 
 [GenerateSerializer]
-public record GameState(Symbol Turn, Symbol?[,] Grid, Symbol? Winner, bool Draw);
+public record GameState(Symbol Turn, Symbol?[][] Grid, Symbol? Winner, bool Draw);
