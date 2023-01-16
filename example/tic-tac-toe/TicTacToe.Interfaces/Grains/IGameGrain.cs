@@ -7,5 +7,5 @@ public interface IGameGrain : IGrainWithStringKey
 {
     Task<GameState> GetGameStateAsync();
     Task AttemptPlayAsync(string userId, Play play);
-    Task<Symbol> JoinGameAsync(string gameId, string userId);
+    Task<Mark> JoinGameAsync(string gameId, string userId);
 }

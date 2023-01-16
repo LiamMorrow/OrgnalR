@@ -3,7 +3,7 @@ using Orleans;
 namespace TicTacToe.Shared.Models;
 
 [GenerateSerializer]
-public enum Symbol
+public enum Mark
 {
     [Id(0)]
     X,
@@ -16,7 +16,7 @@ public enum Symbol
 public record Coord(int Row, int Column);
 
 [GenerateSerializer]
-public record Play(Symbol Symbol, Coord Coord);
+public record Play(Mark Mark, Coord Coord);
 
 [GenerateSerializer]
-public record GameState(Symbol Turn, Symbol?[][] Grid, Symbol? Winner, bool Draw);
+public record GameState(Mark Turn, Mark?[][] Grid, Mark? Winner, bool Draw);

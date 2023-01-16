@@ -11,7 +11,7 @@ public class GameGrain : IGameGrain, IGrainBase
     public IGrainContext GrainContext { get; }
 
     private readonly Game game = new();
-    private readonly Dictionary<Symbol, string> users = new();
+    private readonly Dictionary<Mark, string> users = new();
     private readonly IEnumerable<IGameStateNotifier> gameStateNotifiers;
 
     public GameGrain(IGrainContext grainContext, IEnumerable<IGameStateNotifier> gameStateNotifiers)
@@ -20,18 +20,18 @@ public class GameGrain : IGameGrain, IGrainBase
         this.gameStateNotifiers = gameStateNotifiers;
     }
 
-    public Task<Symbol> JoinGameAsync(string gameId, string userId)
+    public Task<Mark> JoinGameAsync(string gameId, string userId)
     {
-        if (!users.TryGetValue(Symbol.X, out _))
+        if (!users.TryGetValue(Mark.X, out _))
         {
-            users[Symbol.X] = userId;
-            return Task.FromResult(Symbol.X);
+            users[Mark.X] = userId;
+            return Task.FromResult(Mark.X);
         }
 
-        if (!users.TryGetValue(Symbol.O, out _))
+        if (!users.TryGetValue(Mark.O, out _))
         {
-            users[Symbol.O] = userId;
-            return Task.FromResult(Symbol.O);
+            users[Mark.O] = userId;
+            return Task.FromResult(Mark.O);
         }
 
         throw new InvalidOperationException("No players left in game");
@@ -44,13 +44,13 @@ public class GameGrain : IGameGrain, IGrainBase
 
     public Task AttemptPlayAsync(string userId, Play play)
     {
-        if (!users.TryGetValue(play.Symbol, out var symbolUser))
+        if (!users.TryGetValue(play.Mark, out var markUser))
         {
-            throw new InvalidOperationException("No player assigned to symbol " + play.Symbol);
+            throw new InvalidOperationException("No player assigned to mark " + play.Mark);
         }
-        if (symbolUser != userId)
+        if (markUser != userId)
         {
-            throw new InvalidOperationException("Player not assigned to symbol " + play.Symbol);
+            throw new InvalidOperationException("Player not assigned to mark " + play.Mark);
         }
 
         game.AttemptPlay(play);

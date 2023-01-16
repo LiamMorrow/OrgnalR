@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\OrgnalR.SignalR\OrgnalR.SignalR.csproj" />
     <ProjectReference Include="..\TicTacToe.Interfaces\TicTacToe.Interfaces.csproj" />
     <ProjectReference Include="..\TicTacToe.Shared\TicTacToe.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Client" Version="7.0.0" />
+    <PackageReference Include="OrgnalR.SignalR" Version="2.1.0" />
   </ItemGroup>
 
   <PropertyGroup>

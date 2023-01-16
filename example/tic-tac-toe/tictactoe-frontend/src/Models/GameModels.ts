@@ -1,4 +1,4 @@
-export type Symbl = "X" | "O";
+export type Mark = "X" | "O";
 
 export interface Coord {
   row: number;
@@ -6,13 +6,13 @@ export interface Coord {
 }
 
 export interface Play {
-  symbol: Symbl;
+  mark: Mark;
   coord: Coord;
 }
 
 export interface GameState {
-  turn: Symbl;
-  grid: Symbl[][];
-  winner: Symbl | undefined;
+  turn: Mark;
+  grid: Mark[][];
+  winner: Mark | undefined;
   draw: boolean;
 }

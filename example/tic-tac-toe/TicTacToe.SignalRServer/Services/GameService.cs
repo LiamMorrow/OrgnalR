@@ -26,7 +26,7 @@ public class GameService
         return gameGrain.AttemptPlayAsync(userId, play);
     }
 
-    public Task<Symbol> JoinGameAsync(string gameId, string userId)
+    public Task<Mark> JoinGameAsync(string gameId, string userId)
     {
         var gameGrain = clusterClient.GetGrain<IGameGrain>(gameId);
 

@@ -4,12 +4,13 @@ import "./index.css";
 import App, { AppProps } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { GameState, Play, Symbl } from "./Models/GameModels";
+import { GameState, Play, Mark } from "./Models/GameModels";
 import { v4 as uuidv4 } from "uuid";
+import { config } from "./config";
 
 const gameHubConnection = new HubConnectionBuilder()
   .withAutomaticReconnect()
-  .withUrl("http://localhost:5120/game")
+  .withUrl(config.endpoints[Math.floor(Math.random() * config.endpoints.length)])
   .build();
 
 let notifyOfNewGameState: undefined | ((gameId: string) => void);
@@ -24,7 +25,7 @@ const userId = localStorage.getItem("USER_ID") ?? uuidv4();
 localStorage.setItem("USER_ID", userId);
 
 const joinGame = (gameId: string) =>
-  gameHubConnection.invoke<Symbl>("JoinGame", {
+  gameHubConnection.invoke<Mark>("JoinGame", {
     gameId,
     userId,
   });

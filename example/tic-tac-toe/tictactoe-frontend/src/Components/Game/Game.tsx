@@ -1,32 +1,16 @@
 import { useState } from "react";
-import { GameState, Play, Symbl } from "../../Models/GameModels";
+import { GameState, Play, Mark } from "../../Models/GameModels";
+import MarkComponent from "../Mark/Mark";
 import "./Game.css";
 
 interface GameProps {
   gameId: string;
   gameState: GameState;
-  symbol: Symbl;
+  mark: Mark;
   attemptPlay: (play: Play) => Promise<void>;
 }
 
-const SymblComponent = ({
-  symbl,
-  row,
-  col,
-  attemptPlay,
-}: {
-  symbl: Symbl | undefined;
-  row: number;
-  col: number;
-  attemptPlay: () => void;
-}) => (
-  <button onClick={attemptPlay}>
-    row:{row} col: {col}
-    {symbl}
-  </button>
-);
-
-function Game({ gameId, gameState, attemptPlay, symbol }: GameProps) {
+function Game({ gameId, gameState, attemptPlay, mark }: GameProps) {
   const [error, setError] = useState("");
 
   const attemptPlayHandler = (row: number, column: number) => () => {
@@ -35,22 +19,16 @@ function Game({ gameId, gameState, attemptPlay, symbol }: GameProps) {
         column,
         row,
       },
-      symbol,
+      mark,
     }).catch((e) => {
       console.error(e);
       setError("Error Making Play");
     });
   };
 
-  const getColumn = (column: (Symbl | undefined)[], rowNum: number) =>
-    column.map((smb, colNum) => (
-      <SymblComponent
-        key={rowNum + "" + colNum}
-        symbl={smb}
-        row={rowNum}
-        col={colNum}
-        attemptPlay={attemptPlayHandler(rowNum, colNum)}
-      />
+  const getColumn = (column: (Mark | undefined)[], rowNum: number) =>
+    column.map((mark, colNum) => (
+      <MarkComponent key={`${rowNum}${colNum}`} mark={mark} attemptPlay={attemptPlayHandler(rowNum, colNum)} />
     ));
 
   const rows = gameState.grid.map((row, rowNum) => getColumn(row, rowNum));

@@ -21,11 +21,11 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
         return gameService.GetGameStateAsync(gameId);
     }
 
-    public async Task<Symbol> JoinGame(JoinGameRequest request)
+    public async Task<Mark> JoinGame(JoinGameRequest request)
     {
-        var symbol = await gameService.JoinGameAsync(request.GameId, request.UserId);
+        var mark = await gameService.JoinGameAsync(request.GameId, request.UserId);
         await Groups.AddToGroupAsync(Context.ConnectionId, request.GameId);
-        return symbol;
+        return mark;
     }
 
     public async Task AttemptPlay(AttemptPlayRequest request)

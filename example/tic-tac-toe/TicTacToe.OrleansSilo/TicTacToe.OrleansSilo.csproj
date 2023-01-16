@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\OrgnalR.OrleansSilo\OrgnalR.OrleansSilo.csproj" />
     <ProjectReference Include="..\TicTacToe.Shared\TicTacToe.Shared.csproj" />
     <ProjectReference Include="..\TicTacToe.Interfaces\TicTacToe.Interfaces.csproj" />
     <ProjectReference Include="..\TicTacToe.Engine\TicTacToe.Engine.csproj" />
@@ -16,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Server" Version="7.0.0" />
+    <PackageReference Include="OrgnalR.OrleansSilo" Version="2.1.0" />
   </ItemGroup>
 
 </Project>
