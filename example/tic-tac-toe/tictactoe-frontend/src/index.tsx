@@ -4,7 +4,7 @@ import "./index.css";
 import App, { AppProps } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { GameState, Play, Mark } from "./Models/GameModels";
+import { Play, Mark, ConnectedGame } from "./Models/GameModels";
 import { v4 as uuidv4 } from "uuid";
 import { config } from "./config";
 
@@ -18,7 +18,7 @@ let notifyOfNewGameState: undefined | ((gameId: string) => void);
 gameHubConnection.start().then(() =>
   gameHubConnection.on("NewGameStateAvailable", async (gameId: string) => {
     notifyOfNewGameState && notifyOfNewGameState(gameId);
-  })
+  }),
 );
 
 const userId = localStorage.getItem("USER_ID") ?? uuidv4();
@@ -30,7 +30,8 @@ const joinGame = (gameId: string) =>
     userId,
   });
 
-const getGameState = (gameId: string) => gameHubConnection.invoke<GameState>("GetCurrentGameState", gameId);
+const getGameState = (gameId: string) =>
+  gameHubConnection.invoke<ConnectedGame>("GetCurrentGameState", { gameId, userId });
 
 const attemptPlay = (gameId: string, play: Play) =>
   gameHubConnection.invoke<void>("AttemptPlay", {
@@ -50,7 +51,7 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <React.StrictMode>
     <App {...appProps} />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

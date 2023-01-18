@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { GameState, Play, Mark } from "../../Models/GameModels";
+import { Play, Mark, ConnectedGame } from "../../Models/GameModels";
 import MarkComponent from "../Mark/Mark";
 import "./Game.css";
 
 interface GameProps {
   gameId: string;
-  gameState: GameState;
-  mark: Mark;
+  gameState: ConnectedGame;
   attemptPlay: (play: Play) => Promise<void>;
 }
 
-function Game({ gameId, gameState, attemptPlay, mark }: GameProps) {
+function Game({ gameId, gameState, attemptPlay }: GameProps) {
   const [error, setError] = useState("");
 
   const attemptPlayHandler = (row: number, column: number) => () => {
@@ -19,7 +18,7 @@ function Game({ gameId, gameState, attemptPlay, mark }: GameProps) {
         column,
         row,
       },
-      mark,
+      mark: gameState.mark,
     }).catch((e) => {
       console.error(e);
       setError("Error Making Play");
@@ -31,7 +30,7 @@ function Game({ gameId, gameState, attemptPlay, mark }: GameProps) {
       <MarkComponent key={`${rowNum}${colNum}`} mark={mark} attemptPlay={attemptPlayHandler(rowNum, colNum)} />
     ));
 
-  const rows = gameState.grid.map((row, rowNum) => getColumn(row, rowNum));
+  const rows = gameState.state.grid.map((row, rowNum) => getColumn(row, rowNum));
 
   return (
     <div className="Game">

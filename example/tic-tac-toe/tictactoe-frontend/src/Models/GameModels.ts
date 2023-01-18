@@ -16,3 +16,13 @@ export interface GameState {
   winner: Mark | undefined;
   draw: boolean;
 }
+
+export interface ConnectedOpponent {
+  isBot: boolean;
+}
+
+export interface ConnectedGame {
+  state: GameState;
+  mark: Mark;
+  opponent: ConnectedOpponent;
+}

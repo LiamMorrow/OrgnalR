@@ -16,9 +16,9 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
         this.gameService = gameService;
     }
 
-    public Task<GameState> GetCurrentGameState(string gameId)
+    public Task<ConnectedGame> GetCurrentGameState(GetCurrentGameStateRequest request)
     {
-        return gameService.GetGameStateAsync(gameId);
+        return gameService.GetGameStateAsync(request.GameId, request.UserId);
     }
 
     public async Task<Mark> JoinGame(JoinGameRequest request)
@@ -26,6 +26,11 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
         var mark = await gameService.JoinGameAsync(request.GameId, request.UserId);
         await Groups.AddToGroupAsync(Context.ConnectionId, request.GameId);
         return mark;
+    }
+
+    public async Task AddBot(AddBotRequest request)
+    {
+        await gameService.AddBotAsync(request.GameId);
     }
 
     public async Task AttemptPlay(AttemptPlayRequest request)
