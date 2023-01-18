@@ -4,12 +4,12 @@ import MarkComponent from "../Mark/Mark";
 import "./Game.css";
 
 interface GameProps {
-  gameId: string;
-  gameState: ConnectedGame;
+  connectedGame: ConnectedGame;
   attemptPlay: (play: Play) => Promise<void>;
+  addBot: () => Promise<void>;
 }
 
-function Game({ gameId, gameState, attemptPlay }: GameProps) {
+function Game({ addBot, connectedGame, attemptPlay }: GameProps) {
   const [error, setError] = useState("");
 
   const attemptPlayHandler = (row: number, column: number) => () => {
@@ -18,7 +18,7 @@ function Game({ gameId, gameState, attemptPlay }: GameProps) {
         column,
         row,
       },
-      mark: gameState.mark,
+      mark: connectedGame.mark,
     }).catch((e) => {
       console.error(e);
       setError("Error Making Play");
@@ -30,12 +30,13 @@ function Game({ gameId, gameState, attemptPlay }: GameProps) {
       <MarkComponent key={`${rowNum}${colNum}`} mark={mark} attemptPlay={attemptPlayHandler(rowNum, colNum)} />
     ));
 
-  const rows = gameState.state.grid.map((row, rowNum) => getColumn(row, rowNum));
+  const rows = connectedGame.state.grid.map((row, rowNum) => getColumn(row, rowNum));
 
   return (
     <div className="Game">
       <div className="grid">{rows}</div>
       <span>{error}</span>
+      {!connectedGame.opponent && <button onClick={addBot}>Add Opponent Bot</button>}
     </div>
   );
 }

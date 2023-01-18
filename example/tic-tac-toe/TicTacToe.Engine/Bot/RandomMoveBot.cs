@@ -17,10 +17,17 @@ public class RandomMoveBot : IBot
         return gameState.Grid
             .SelectMany(
                 (row, rowNum) =>
-                    row.Where(mark => mark == null)
-                        .Select((_, colNum) => new Play(gameState.Turn, new Coord(rowNum, colNum)))
+                    row.Select(
+                            (mark, colNum) =>
+                                new
+                                {
+                                    Play = new Play(gameState.Turn, new Coord(rowNum, colNum)),
+                                    ExistingMark = mark
+                                }
+                        )
+                        .Where(play => play.ExistingMark == null)
+                        .Select(x => x.Play)
             )
-            .Where(play => play != null)
             .OrderBy(_ => random.Next())
             .First();
     }

@@ -32,11 +32,16 @@ const attemptPlay = (gameId: string, play: Play) =>
     gameId,
     play,
   });
+const addBot = (gameId: string) =>
+  gameHubConnection.invoke<void>("AddBot", {
+    gameId,
+  });
 
 const appProps: AppProps = {
   joinGame,
   getGameState,
   attemptPlay,
+  addBot,
   setNotifyOfNewGameStateCb: (cb) => (notifyOfNewGameState = cb),
 };
 

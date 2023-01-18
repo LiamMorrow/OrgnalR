@@ -20,6 +20,7 @@ builder.Services.AddOrleans(
 );
 
 builder.Services.AddSingleton<IGameStateNotifier, OrgnalRGameHubGameStateNotifier>();
+builder.Services.AddSingleton<IGameStateNotifier, OrleansBotGameStateNotifier>();
 
 var app = builder.Build();
 
