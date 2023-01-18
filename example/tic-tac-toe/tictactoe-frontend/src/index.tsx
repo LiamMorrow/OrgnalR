@@ -5,7 +5,6 @@ import App, { AppProps } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Play, Mark, ConnectedGame } from "./Models/GameModels";
-import { v4 as uuidv4 } from "uuid";
 import { config } from "./config";
 
 const gameHubConnection = new HubConnectionBuilder()
@@ -21,22 +20,16 @@ gameHubConnection.start().then(() =>
   }),
 );
 
-const userId = localStorage.getItem("USER_ID") ?? uuidv4();
-localStorage.setItem("USER_ID", userId);
-
 const joinGame = (gameId: string) =>
   gameHubConnection.invoke<Mark>("JoinGame", {
     gameId,
-    userId,
   });
 
-const getGameState = (gameId: string) =>
-  gameHubConnection.invoke<ConnectedGame>("GetCurrentGameState", { gameId, userId });
+const getGameState = (gameId: string) => gameHubConnection.invoke<ConnectedGame>("GetCurrentGameState", { gameId });
 
 const attemptPlay = (gameId: string, play: Play) =>
   gameHubConnection.invoke<void>("AttemptPlay", {
     gameId,
-    userId,
     play,
   });
 
