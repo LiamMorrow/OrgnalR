@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <Version>2.2.0</Version>
+        <Version>2.3.0</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
@@ -9,10 +9,8 @@
         <IncludeSource>true</IncludeSource>
         <RepositoryUrl>https://github.com/LiamMorrow/OrgnalR</RepositoryUrl>
         <PackageReleaseNotes>
-          Features:
-            - Add HubContextProvider which allows for a grain to send messages to connected SignalR clients
           Bugs:
-            - Fixed arbitrary wait of 5s before server startup, and replaced with orleans lifecycle methods
+            - Update Orleans to latest version
         </PackageReleaseNotes>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>11.0</LangVersion>

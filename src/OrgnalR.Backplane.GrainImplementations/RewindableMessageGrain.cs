@@ -41,7 +41,7 @@ namespace OrgnalR.Backplane.GrainImplementations
             );
             RegisterTimer(
                 WriteStateIfDirtyAsync,
-                null,
+                string.Empty, // state is not used
                 TimeSpan.FromSeconds(30),
                 TimeSpan.FromSeconds(30)
             );
