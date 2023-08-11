@@ -20,7 +20,7 @@ namespace OrgnalR.Backplane.GrainImplementations
         {
             RegisterTimer(
                 WriteStateIfDirty,
-                null,
+                string.Empty, // state is not used
                 TimeSpan.FromSeconds(30),
                 TimeSpan.FromSeconds(30)
             );
