@@ -6,8 +6,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Client" Version="7.0.0" />
-    <PackageReference Include="OrgnalR.SignalR" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.1" />
+    <PackageReference Include="OrgnalR.SignalR" Version="2.3.0" />
   </ItemGroup>
 
   <PropertyGroup>
