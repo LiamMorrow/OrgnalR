@@ -1,0 +1,10 @@
+.JoinGame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.JoinGame > * {
+  max-width: 300px;
+  margin: 0.25rem;
+}

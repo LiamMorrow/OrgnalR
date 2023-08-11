@@ -1,0 +1,14 @@
+.Game {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.grid {
+  max-width: 400px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.grid > * {
+  min-height: 50px;
+}
