@@ -2029,10 +2029,12 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.9.tgz#c7164e0f8d3f12dfae336af0b1f7fdec8c6b204f"
   integrity sha512-8e2HYcg7ohnTUbHk8focoklEQYvemQmu9M/f43DZVx43kHn0tE3BY/6gSDxS7k0SprtS0NHvj+L80cGLnoOUcQ==
 
-"@types/node@^16.7.13":
-  version "16.18.59"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.59.tgz#4cdbd631be6d9be266a96fb17b5d0d7ad6bbe26c"
-  integrity sha512-PJ1w2cNeKUEdey4LiPra0ZuxZFOGvetswE8qHRriV/sUkL5Al4tTmPV9D2+Y/TPIxTHHgxTfRjZVKWhPw/ORhQ==
+"@types/node@^20.0.0":
+  version "20.8.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.8.tgz#adee050b422061ad5255fc38ff71b2bb96ea2a0e"
+  integrity sha512-YRsdVxq6OaLfmR9Hy816IMp33xOBjfyOgUd77ehqg96CFywxAPbDbXvAsuN2KVg2HOT8Eh6uAfU+l4WffwPVrQ==
+  dependencies:
+    undici-types "~5.25.1"
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -8578,6 +8580,11 @@ unbox-primitive@^1.0.2:
     has-bigints "^1.0.2"
     has-symbols "^1.0.3"
     which-boxed-primitive "^1.0.2"
+
+undici-types@~5.25.1:
+  version "5.25.3"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.25.3.tgz#e044115914c85f0bcbb229f346ab739f064998c3"
+  integrity sha512-Ga1jfYwRn7+cP9v8auvEXN1rX3sWqlayd4HP7OKk4mZWylEmu3KzXDUGrQUN6Ol7qo1gPvB2e5gX6udnyEPgdA==
 
 unicode-canonical-property-names-ecmascript@^2.0.0:
   version "2.0.0"
