@@ -18,6 +18,8 @@ namespace OrgnalR.Backplane.GrainImplementations
             IRewindableMessageGrain<T>
     {
         private int maxMessages;
+        private bool persistenceEnabled;
+        private TimeSpan persistenceInterval;
         private CircularBuffer<RewindableMessageWrapper<T>> messageBuffer = null!;
         private long OldestMessageId => messageBuffer.Front().MessageId;
         private long LatestMessageId => State.LatestMessageId;
@@ -27,6 +29,9 @@ namespace OrgnalR.Backplane.GrainImplementations
         {
             var config = (OrgnalRSiloConfig?)ServiceProvider?.GetService(typeof(OrgnalRSiloConfig));
             maxMessages = config?.MaxMessageRewind ?? 0;
+            persistenceEnabled = config?.PersistenceEnabled ?? false;
+            persistenceInterval = config?.PerstenceInterval ?? TimeSpan.Zero;
+
             if (State == null || State.Messages == null)
             {
                 State = new RewindableMessageGrainState<T>
@@ -39,12 +44,16 @@ namespace OrgnalR.Backplane.GrainImplementations
                 maxMessages,
                 State.Messages
             );
-            RegisterTimer(
-                WriteStateIfDirtyAsync,
-                string.Empty, // state is not used
-                TimeSpan.FromSeconds(30),
-                TimeSpan.FromSeconds(30)
-            );
+            
+            if (persistenceInterval > TimeSpan.Zero)
+            {
+                RegisterTimer(
+                    WriteStateIfDirtyAsync,
+                    string.Empty, // state is not used
+                    persistenceInterval,
+                    persistenceInterval
+                );
+            }
             return base.OnActivateAsync(cancellationToken);
         }
 
@@ -100,7 +109,7 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         private Task WriteStateIfDirtyAsync(object? _)
         {
-            if (!dirty)
+            if (!dirty || !persistenceEnabled)
             {
                 return Task.CompletedTask;
             }
