@@ -11,10 +11,10 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["TicTacToe.OrleansSilo/TicTacToe.OrleansSilo.csproj", "TicTacToe.OrleansSilo/"]
-RUN dotnet restore "TicTacToe.OrleansSilo/TicTacToe.OrleansSilo.csproj"
+COPY ["./example/tic-tac-toe/TicTacToe.OrleansSilo/TicTacToe.OrleansSilo.csproj", "example/tic-tac-toe/TicTacToe.OrleansSilo/"]
+RUN dotnet restore "example/tic-tac-toe/TicTacToe.OrleansSilo/TicTacToe.OrleansSilo.csproj"
 COPY . .
-WORKDIR "/src/TicTacToe.OrleansSilo"
+WORKDIR "/src/example/tic-tac-toe/TicTacToe.OrleansSilo"
 RUN dotnet build "TicTacToe.OrleansSilo.csproj" -c Release -o /app/build
 
 FROM build AS publish

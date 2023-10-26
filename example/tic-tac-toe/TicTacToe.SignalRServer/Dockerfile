@@ -11,10 +11,10 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["TicTacToe.SignalRServer/TicTacToe.SignalRServer.csproj", "TicTacToe.SignalRServer/"]
-RUN dotnet restore "TicTacToe.SignalRServer/TicTacToe.SignalRServer.csproj"
+COPY ["example/tic-tac-toe/TicTacToe.SignalRServer/TicTacToe.SignalRServer.csproj", "example/tic-tac-toe/TicTacToe.SignalRServer/"]
+RUN dotnet restore "example/tic-tac-toe/TicTacToe.SignalRServer/TicTacToe.SignalRServer.csproj"
 COPY . .
-WORKDIR "/src/TicTacToe.SignalRServer"
+WORKDIR "/src/example/tic-tac-toe/TicTacToe.SignalRServer"
 RUN dotnet build "TicTacToe.SignalRServer.csproj" -c Release -o /app/build
 
 FROM build AS publish

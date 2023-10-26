@@ -1,12 +1,11 @@
-
-version: '3.4'
+version: "3.4"
 
 services:
   tictactoeorleanssilo:
     image: tictactoeorleanssilo
     build:
-      context: .
-      dockerfile: TicTacToe.OrleansSilo/Dockerfile
+      context: ../../
+      dockerfile: ./example/tic-tac-toe/TicTacToe.OrleansSilo/Dockerfile
     healthcheck:
       test: sleep 9
       interval: 1s
@@ -19,8 +18,8 @@ services:
       tictactoeorleanssilo:
         condition: service_healthy
     build:
-      context: .
-      dockerfile: TicTacToe.SignalRServer/Dockerfile
+      context: ../../
+      dockerfile: ./example/tic-tac-toe/TicTacToe.SignalRServer/Dockerfile
     ports:
       - 5000:5000
     environment:
@@ -31,8 +30,8 @@ services:
       tictactoeorleanssilo:
         condition: service_healthy
     build:
-      context: .
-      dockerfile: TicTacToe.SignalRServer/Dockerfile
+      context: ../../
+      dockerfile: ./example/tic-tac-toe/TicTacToe.SignalRServer/Dockerfile
     ports:
       - 5001:5000
     environment:
