@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <Version>2.3.0</Version>
+        <Version>2.3.1</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
@@ -10,7 +10,7 @@
         <RepositoryUrl>https://github.com/LiamMorrow/OrgnalR</RepositoryUrl>
         <PackageReleaseNotes>
           Bugs:
-            - Update Orleans to latest version
+            - Allow for removing persistence to get around memory leak
         </PackageReleaseNotes>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>11.0</LangVersion>
