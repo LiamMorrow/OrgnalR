@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.1" />
-    <PackageReference Include="OrgnalR.SignalR" Version="2.3.0" />
+    <ProjectReference Include="..\..\..\src\OrgnalR.SignalR\OrgnalR.SignalR.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
