@@ -38,7 +38,7 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         private Task WriteStateIfDirty(object? _)
         {
-            if (dirty)
+            if (!dirty)
                 return Task.CompletedTask;
             return WriteStateAsync();
         }
