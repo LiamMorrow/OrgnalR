@@ -4,5 +4,6 @@
     "config:base"
   ],
   "extends": ["config:base", "group:allNonMajor"],
-  "schedule": ["before 4am every monday"]
+  "schedule": ["before 4am every monday"],
+  "automerge": true
 }
