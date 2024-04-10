@@ -17,7 +17,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.0.100
+          dotnet-version: 8.0.x
       - name: Build SignalR Lib
         run: dotnet build --configuration Release ./src/OrgnalR.SignalR
       - name: Build Orleans Lib
