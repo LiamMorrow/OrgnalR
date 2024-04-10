@@ -37,7 +37,7 @@ services:
     environment:
       ConnectionStrings__OrleansCluster: Endpoints=tictactoeorleanssilo:30000
   tictactoefrontend:
-    image: "node:14"
+    image: "node:20"
     user: "node"
     working_dir: /home/node/app
     ports:
