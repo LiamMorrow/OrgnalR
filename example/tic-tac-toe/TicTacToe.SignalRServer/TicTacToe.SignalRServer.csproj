@@ -6,7 +6,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.4" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.6" />
     <ProjectReference Include="..\..\..\src\OrgnalR.SignalR\OrgnalR.SignalR.csproj" />
   </ItemGroup>
 
