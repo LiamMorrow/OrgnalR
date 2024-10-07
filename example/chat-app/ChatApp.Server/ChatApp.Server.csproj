@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="8.0.8" />
-    <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.6" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="8.2.0" />
   </ItemGroup>
 
   <ItemGroup>
