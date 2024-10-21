@@ -12,7 +12,7 @@
         <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.6" />
+        <PackageReference Include="Microsoft.Orleans.Client" Version="7.2.7" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\OrgnalR.Core\OrgnalR.Core.csproj" />
