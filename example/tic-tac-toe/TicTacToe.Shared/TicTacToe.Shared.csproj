@@ -8,6 +8,6 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.2.7" />
+    <PackageReference Include="Microsoft.Orleans.Sdk" Version="8.2.0" />
   </ItemGroup>
 </Project>
