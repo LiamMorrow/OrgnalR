@@ -18,7 +18,7 @@ namespace OrgnalR.Backplane.GrainImplementations
 
         public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            RegisterTimer(
+            this.RegisterGrainTimer(
                 WriteStateIfDirty,
                 string.Empty, // state is not used
                 TimeSpan.FromSeconds(30),

@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <Version>2.3.2</Version>
+        <TargetFramework>net9.0</TargetFramework>
+        <Version>9.0.0</Version>
         <Authors>Liam Morrow</Authors>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <IncludeSymbols>true</IncludeSymbols>
@@ -9,8 +9,7 @@
         <IncludeSource>true</IncludeSource>
         <RepositoryUrl>https://github.com/LiamMorrow/OrgnalR</RepositoryUrl>
         <PackageReleaseNotes>
-          Bugs:
-            - Fix state not actually persisting
+          Update to .NET 9.0
         </PackageReleaseNotes>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>11.0</LangVersion>

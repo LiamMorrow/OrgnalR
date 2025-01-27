@@ -13,6 +13,6 @@
     <ItemGroup>
         <PackageReference Include="System.IO" Version="4.3.0" />
         <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
-        <PackageReference Include="Microsoft.Orleans.Sdk" Version="7.2.7" />
+        <PackageReference Include="Microsoft.Orleans.Sdk" Version="9.0.1" />
     </ItemGroup>
 </Project>

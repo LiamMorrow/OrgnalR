@@ -44,10 +44,10 @@ namespace OrgnalR.Backplane.GrainImplementations
                 maxMessages,
                 State.Messages
             );
-            
+
             if (persistenceInterval > TimeSpan.Zero)
             {
-                RegisterTimer(
+                this.RegisterGrainTimer(
                     WriteStateIfDirtyAsync,
                     string.Empty, // state is not used
                     persistenceInterval,
