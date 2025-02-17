@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Server" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="9.1.2" />
 
     <ProjectReference Include="..\..\..\src\OrgnalR.OrleansSilo\OrgnalR.OrleansSilo.csproj" />
     <!-- <PackageReference Include="OrgnalR.OrleansSilo" Version="2.3.0" /> -->
