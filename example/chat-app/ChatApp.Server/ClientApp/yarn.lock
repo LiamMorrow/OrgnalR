@@ -1613,10 +1613,10 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
-"@microsoft/signalr@^8.0.0":
-  version "8.0.17"
-  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-8.0.17.tgz#6eac218beac38e4e4ba4a3577ed39ac33711b2ed"
-  integrity sha512-5pM6xPtKZNJLO0Tq5nQasVyPFwi/WBY3QB5uc/v3dIPTpS1JXQbaXAQAPxFoQ5rTBFE094w8bbqkp17F9ReQvA==
+"@microsoft/signalr@^9.0.0":
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-9.0.6.tgz#67dd074941c2ec2b857f607504c920a0c6274e27"
+  integrity sha512-DrhgzFWI9JE4RPTsHYRxh4yr+OhnwKz8bnJe7eIi7mLLjqhJpEb62CiUy/YbFvLqLzcGzlzz1QWgVAW0zyipMQ==
   dependencies:
     abort-controller "^3.0.0"
     eventsource "^2.0.2"
