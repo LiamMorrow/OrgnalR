@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 30000
 
@@ -9,7 +9,7 @@ ENV ASPNETCORE_URLS=http://+:30000
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY ["./example/tic-tac-toe/TicTacToe.OrleansSilo/TicTacToe.OrleansSilo.csproj", "example/tic-tac-toe/TicTacToe.OrleansSilo/"]
 RUN dotnet restore "example/tic-tac-toe/TicTacToe.OrleansSilo/TicTacToe.OrleansSilo.csproj"
