@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@microsoft/signalr": "^9.0.0",
+    "@microsoft/signalr": "^10.0.0",
     "jquery": "^3.6.0",
     "merge": "^2.1.1",
     "oidc-client": "^1.11.5",
